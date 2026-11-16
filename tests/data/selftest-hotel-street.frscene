@@ -1,0 +1,4 @@
+{ "format": "FactionsReborn.WorldEditor.Scene", "version": 1, "name": "Self test",
+  "maps": [ { "archive": "world-seattle-arrival.psarc", "path": "pak68/sea-hub-hotel-street.pak" } ],
+  "objects": [], "spawns": [], "boundary": { "points": [], "minY": -10, "maxY": 50 },
+  "camera": { "position": [-66, 41, -830], "yawDegrees": -125, "pitchDegrees": -30 } }

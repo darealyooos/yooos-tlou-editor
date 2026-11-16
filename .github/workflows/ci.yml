@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Build (Release, warnings as errors)
+        shell: pwsh
+        run: ./scripts/build.ps1 -Configuration Release
+
+      # No game files on CI: tests that need them return early; format, settings and keybinding tests run.
+      - name: Unit tests
+        shell: pwsh
+        run: ./scripts/test.ps1 -Configuration Release
+
+      - name: Package (framework-dependent)
+        shell: pwsh
+        run: ./scripts/package.ps1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-zip
+          path: |
+            out/release/*.zip
+            out/release/*.sha256
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: out/test-results
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-zip
+          path: dist
+      - name: Draft GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: dist/*

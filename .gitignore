@@ -1,0 +1,43 @@
+# Build output
+bin/
+obj/
+out/
+publish/
+TestResults/
+*.trx
+
+# IDE / user files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.rsuser
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bad
+
+# Never commit game data or anything extracted from it
+*.psarc
+*.pak
+*.ndb
+*.dds
+*.tga
+thumbs/
+extracted/
+
+# Local configuration
+settings.json
+appsettings.Development.json
+.env
+
+# Export marker (local only)
+/.yooos-export
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

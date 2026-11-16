@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>FactionsReborn.WorldEditor.Core</AssemblyName>
+    <RootNamespace>FactionsReborn.WorldEditor.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WorldEditor.Tests" />
+    <InternalsVisibleTo Include="Yooos.Tests" />
+  </ItemGroup>
+
+</Project>
