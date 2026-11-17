@@ -79,6 +79,67 @@ public static class Shapes
         return mesh;
     }
 
+    /// <summary>Closed cone from a base centre to a tip (gizmo arrow heads).</summary>
+    public static void Cone(MeshGeometry3D mesh, Point3D baseCentre, Point3D tip, double radius, int segments)
+    {
+        var d = tip - baseCentre;
+        if (d.Length < 1e-9) return;
+        d.Normalize();
+        var u = Vector3D.CrossProduct(d, Math.Abs(d.Y) > 0.9 ? new Vector3D(1, 0, 0) : new Vector3D(0, 1, 0));
+        u.Normalize();
+        var v = Vector3D.CrossProduct(d, u);
+        int b = mesh.Positions.Count;
+        mesh.Positions.Add(tip);
+        mesh.Positions.Add(baseCentre);
+        for (int i = 0; i < segments; i++)
+        {
+            double a = 2 * Math.PI * i / segments;
+            mesh.Positions.Add(baseCentre + (u * Math.Cos(a) + v * Math.Sin(a)) * radius);
+        }
+        for (int i = 0; i < segments; i++)
+        {
+            int p = b + 2 + i, q = b + 2 + (i + 1) % segments;
+            mesh.TriangleIndices.Add(b); mesh.TriangleIndices.Add(p); mesh.TriangleIndices.Add(q);       // side
+            mesh.TriangleIndices.Add(b + 1); mesh.TriangleIndices.Add(q); mesh.TriangleIndices.Add(p);   // base
+        }
+    }
+
+    /// <summary>UV sphere (gizmo centre).</summary>
+    public static MeshGeometry3D Sphere(Point3D centre, double radius, int slices, int stacks)
+    {
+        var mesh = new MeshGeometry3D();
+        for (int s = 0; s <= stacks; s++)
+        {
+            double phi = Math.PI * s / stacks;
+            for (int i = 0; i <= slices; i++)
+            {
+                double th = 2 * Math.PI * i / slices;
+                mesh.Positions.Add(new Point3D(centre.X + radius * Math.Sin(phi) * Math.Cos(th), centre.Y + radius * Math.Cos(phi), centre.Z + radius * Math.Sin(phi) * Math.Sin(th)));
+            }
+        }
+        for (int s = 0; s < stacks; s++)
+            for (int i = 0; i < slices; i++)
+            {
+                int a = s * (slices + 1) + i, b = a + slices + 1;
+                mesh.TriangleIndices.Add(a); mesh.TriangleIndices.Add(b); mesh.TriangleIndices.Add(a + 1);
+                mesh.TriangleIndices.Add(a + 1); mesh.TriangleIndices.Add(b); mesh.TriangleIndices.Add(b + 1);
+            }
+        return mesh;
+    }
+
+    /// <summary>Lines every <paramref name="step"/> m, skipping those on multiples of <paramref name="skipEvery"/> (drawn by another layer).</summary>
+    public static MeshGeometry3D Grid(double half, double step, double y, double thickness, double skipEvery)
+    {
+        var mesh = new MeshGeometry3D();
+        for (double v = -half; v <= half + 1e-9; v += step)
+        {
+            if (skipEvery > 0 && Math.Abs(Math.IEEERemainder(v, skipEvery)) < 1e-6) continue;
+            Segment(mesh, new Point3D(v, y, -half), new Point3D(v, y, half), thickness);
+            Segment(mesh, new Point3D(-half, y, v), new Point3D(half, y, v), thickness);
+        }
+        return mesh;
+    }
+
     public static MeshGeometry3D Grid(double half, double step, double y, double thickness)
     {
         var mesh = new MeshGeometry3D();

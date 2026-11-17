@@ -76,6 +76,27 @@ public partial class MainWindow
         }
         SetTool(GizmoMode.Move);
 
+        // 5b. Orthographic projection: screen picking and gizmo handles line up with what is drawn; switching back restores the eye.
+        var eyeBefore = _camera.Position;
+        var centreBefore = ViewCenterPoint();
+        Select(bucket);
+        SetProjection(true);
+        Check(_camera.Orthographic && Viewport.Camera is OrthographicCamera, "orthographic camera active");
+        Check((ViewCenterPoint() - centreBefore).Length() < 0.5f, $"orthographic view-centre pick matches perspective ({Fmt(ViewCenterPoint())})");
+        if (_camera.Project(new Point3D(bucket.Position.X, bucket.Position.Y + 0.15, bucket.Position.Z), ViewSize) is { } orthoPixel)
+        {
+            Select(null);
+            Select(PickSelectable(_camera.RayAt(orthoPixel, ViewSize)));
+            Check(ReferenceEquals(_selected, bucket), "orthographic screen pick selects the bucket");
+        }
+        else Check(false, "bucket projects in orthographic");
+        Select(bucket);
+        if (_camera.Project(new Point3D(bucket.Position.X + _gizmo.Size * 0.6, bucket.Position.Y, bucket.Position.Z), ViewSize) is { } orthoHandle)
+            Check(_gizmo.Pick(orthoHandle, _camera, ViewSize) == 0, "orthographic gizmo X handle picked under the mouse");
+        SetProjection(false);
+        Check(!_camera.Orthographic && Viewport.Camera is PerspectiveCamera && (_camera.Position - eyeBefore).Length < 0.5,
+            $"back to perspective, eye restored ({(_camera.Position - eyeBefore).Length:0.###} m)");
+
         // 6. Duplicate, spawns, boundary.
         OnDuplicate(null, null);
         await WhenIdleAsync();
@@ -119,13 +140,22 @@ public partial class MainWindow
 
         // 6d. Panel toggles.
         _actions["view.browser"]();
-        Check(BrowserPanel.Visibility == Visibility.Collapsed && LeftColumn.Width.Value == 0, "Shift+A action hides the Asset Browser");
-        _actions["view.browser"]();
-        Check(BrowserPanel.Visibility == Visibility.Visible, "Asset Browser restored");
-        _actions["view.inspector"](); _actions["view.hierarchy"]();
-        Check(ScenePanel.Visibility == Visibility.Collapsed, "hiding Inspector and Hierarchy collapses the right panel");
-        _actions["view.inspector"](); _actions["view.hierarchy"]();
-        Check(ScenePanel.Visibility == Visibility.Visible && InspectorPanel.Visibility == Visibility.Visible, "right panel restored");
+        Check(BrowserPanel.Visibility == Visibility.Collapsed && OutlinerPanel.Visibility == Visibility.Visible, "Shift+A action hides the Asset Browser, the hierarchy stays");
+        _actions["view.hierarchy"]();
+        Check(LeftPanel.Visibility == Visibility.Collapsed && LeftColumn.Width.Value == 0, "hiding Browser and Hierarchy collapses the left column");
+        _actions["view.browser"](); _actions["view.hierarchy"]();
+        Check(BrowserPanel.Visibility == Visibility.Visible && OutlinerPanel.Visibility == Visibility.Visible && LeftColumn.Width.Value > 0, "left panels restored");
+        _actions["view.inspector"]();
+        Check(InspectorPanel.Visibility == Visibility.Collapsed && RightColumn.Width.Value == 0, "hiding the Inspector collapses the right column");
+        _actions["view.inspector"]();
+        Check(InspectorPanel.Visibility == Visibility.Visible && RightColumn.Width.Value > 0, "Inspector restored");
+        SetWorkspacePanel(false);
+        Check(AssetWorkspace.Visibility == Visibility.Collapsed && WorkspaceRow.Height.Value == 0, "Asset Workspace hidden");
+        SetWorkspacePanel(true);
+        Check(AssetWorkspace.Visibility == Visibility.Visible && WorkspaceRow.Height.Value > 0, "Asset Workspace restored");
+        WsTabAssets.IsChecked = true;
+        RefreshWorkspacePanel();
+        Check(WsCards.Children.Count == _doc.Objects.GroupBy(o => o.Asset.Key + "#" + o.Prototype).Count(), $"Asset Workspace lists the scene's assets ({WsCards.Children.Count})");
         UpdateLayout();
 
         // 7. Save, reopen, compare.

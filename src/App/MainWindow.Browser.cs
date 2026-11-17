@@ -117,35 +117,85 @@ public partial class MainWindow
             item.IsFavorite = _favorites.Contains(item.Key);
             if (_thumbs.TryGetValue(item.Key, out var t)) item.Thumbnail = t;
         }
-        BuildCategoryChips();
+        BuildCategoryTree();
     }
 
-    private void BuildCategoryChips()
-    {
-        CategoryPanel.Children.Clear();
-        if (CurrentSource == "levels") { CategoryPanel.Visibility = Visibility.Collapsed; _category = AllGroup; return; }
-        CategoryPanel.Visibility = Visibility.Visible;
-        var counts = _sourceItems.GroupBy(i => i.Group).ToDictionary(g => g.Key, g => g.Count());
-        if (_category != AllGroup && !counts.ContainsKey(_category)) _category = AllGroup;
-        AddChip(AllGroup, _sourceItems.Count);
-        foreach (var g in GroupOrder.Concat(counts.Keys.Except(GroupOrder)))
-            if (counts.TryGetValue(g, out int n)) AddChip(g, n);
+    private string? _archiveFilter;
+    private bool _syncingCategories;
+    private readonly HashSet<string> _expandedCategories = new(StringComparer.Ordinal);
 
-        void AddChip(string group, int count)
+    /// <summary>Folder tree of the current source: browse groups, then the archives they come from (levels: archives only).</summary>
+    private void BuildCategoryTree()
+    {
+        _syncingCategories = true;
+        try
         {
-            var text = new TextBlock();
-            text.Inlines.Add(new System.Windows.Documents.Run(group));
-            text.Inlines.Add(new System.Windows.Documents.Run($"  {count:N0}") { Foreground = (Brush)FindResource("Text4"), FontSize = 10 });
-            var chip = new RadioButton { Style = (Style)FindResource("Chip"), GroupName = "Category", Content = text, Tag = group, IsChecked = group == _category };
-            chip.Checked += (_, _) => { _category = group; RefreshAssetList(); };
-            CategoryPanel.Children.Add(chip);
+            CategoryTree.Items.Clear();
+            bool levels = CurrentSource == "levels";
+            var groups = levels
+                ? new Dictionary<string, int> { [AllGroup] = _sourceItems.Count }
+                : _sourceItems.GroupBy(i => i.Group).ToDictionary(g => g.Key, g => g.Count());
+            if (_category != AllGroup && !groups.ContainsKey(_category)) { _category = AllGroup; _archiveFilter = null; }
+            if (_archiveFilter is not null && !_sourceItems.Any(i => i.Source == _archiveFilter && (_category == AllGroup || i.Group == _category))) _archiveFilter = null;
+
+            var root = CategoryNode(levels ? "All levels" : "All assets", AllGroup, null, _sourceItems.Count, levels ? "I.Globe" : "I.Folder");
+            root.IsExpanded = true;
+            if (levels) AddArchives(root, AllGroup, _sourceItems);
+            else
+            {
+                foreach (var g in GroupOrder.Concat(groups.Keys.Except(GroupOrder)))
+                {
+                    if (!groups.TryGetValue(g, out int n)) continue;
+                    var node = CategoryNode(g, g, null, n, CategoryIcon(g));
+                    AddArchives(node, g, _sourceItems.Where(i => i.Group == g));
+                    node.IsExpanded = _expandedCategories.Contains(g) || (_category == g && _archiveFilter is not null);
+                    string key = g;
+                    node.Expanded += (_, e) => { if (ReferenceEquals(e.OriginalSource, node)) _expandedCategories.Add(key); };
+                    node.Collapsed += (_, e) => { if (ReferenceEquals(e.OriginalSource, node)) _expandedCategories.Remove(key); };
+                    root.Items.Add(node);
+                }
+            }
+            CategoryTree.Items.Add(root);
         }
+        finally { _syncingCategories = false; }
+
+        void AddArchives(TreeViewItem parent, string group, IEnumerable<BrowserItem> items)
+        {
+            var archives = items.GroupBy(i => i.Source).Where(a => a.Key.Length > 0).OrderBy(a => a.Key, StringComparer.OrdinalIgnoreCase).ToList();
+            if (archives.Count < 2 && group != AllGroup) return;
+            foreach (var a in archives) parent.Items.Add(CategoryNode(a.Key, group, a.Key, a.Count(), "I.Archive"));
+        }
+    }
+
+    private TreeViewItem CategoryNode(string title, string group, string? archive, int count, string icon)
+    {
+        var header = new DockPanel();
+        var c = new TextBlock { Text = count.ToString("N0"), Style = (Style)FindResource("Count"), Margin = new Thickness(6, 0, 0, 0) };
+        DockPanel.SetDock(c, Dock.Right);
+        header.Children.Add(c);
+        var ic = MakeIcon(icon, (Brush)FindResource(archive is null ? "Text3" : "Text4"));
+        ic.Margin = new Thickness(0, 0, 6, 0);
+        header.Children.Add(ic);
+        header.Children.Add(new TextBlock { Text = title, TextTrimming = TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center, FontSize = archive is null ? 12 : 11.5 });
+        var item = new TreeViewItem { Header = header, Tag = (group, archive), ToolTip = archive is null ? $"{title}: {count:N0} assets" : $"{title} ({group}): {count:N0} assets" };
+        if (group == _category && archive == _archiveFilter) item.IsSelected = true;
+        return item;
+    }
+
+    private void OnCategorySelected(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (_syncingCategories || e.NewValue is not TreeViewItem { Tag: ValueTuple<string, string?> tag }) return;
+        if (tag.Item1 == _category && tag.Item2 == _archiveFilter) return;
+        _category = tag.Item1;
+        _archiveFilter = tag.Item2;
+        RefreshAssetList();
     }
 
     private void OnSourceChanged(object sender, RoutedEventArgs e)
     {
         if (AssetList is null) return;
         _category = AllGroup;
+        _archiveFilter = null;
         RefreshAssetList();
     }
 
@@ -165,16 +215,18 @@ public partial class MainWindow
 
     private void RefreshAssetList()
     {
-        if (AssetList is null || CategoryPanel is null) return;
+        if (AssetList is null || CategoryTree is null) return;
         EnsureSourceItems();
 
         var words = (SearchBox.Text ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
         SearchHint.Visibility = string.IsNullOrEmpty(SearchBox.Text) ? Visibility.Visible : Visibility.Collapsed;
         SearchClear.Visibility = string.IsNullOrEmpty(SearchBox.Text) ? Visibility.Collapsed : Visibility.Visible;
-        FavOnlyGlyph.Text = FavOnly.IsChecked == true ? "" : "";
+        FavOnlyGlyph.Fill = FavOnly.IsChecked == true ? (Brush)FindResource("Star") : null;
+        FavOnlyGlyph.Stroke = FavOnly.IsChecked == true ? (Brush)FindResource("Star") : (Brush)FindResource("Text3");
 
         IEnumerable<BrowserItem> q = _sourceItems;
         if (_category != AllGroup) q = q.Where(i => i.Group == _category);
+        if (_archiveFilter is not null) q = q.Where(i => i.Source == _archiveFilter);
         if (FavOnly.IsChecked == true) q = q.Where(i => i.IsFavorite);
         if (words.Length > 0) q = q.Where(i => words.All(w => i.Label.Contains(w, StringComparison.OrdinalIgnoreCase)));
         q = SortBox.SelectedIndex switch
@@ -285,6 +337,7 @@ public partial class MainWindow
         }
         ShowBrowserDetails(item, null);
         UpdateBrowserButtons();
+        SetWorkspaceSubject(item, item is { IsLevel: false } && _library is not null ? _library.TryGetLoaded(item.Asset) : null);
         _ = LoadPreviewAsync(item);
     }
 
@@ -297,7 +350,8 @@ public partial class MainWindow
         FavToggle.IsEnabled = CatFavButton.IsEnabled = item is not null;
         bool fav = item?.IsFavorite == true;
         FavToggle.IsChecked = fav;
-        FavToggleGlyph.Text = fav ? "" : "";
+        FavToggleGlyph.Fill = fav ? (Brush)FindResource("Star") : null;
+        FavToggleGlyph.Stroke = (Brush)FindResource(fav ? "Star" : "Text3");
         CatFavButton.Content = fav ? "Remove favourite" : "Add to favourites";
     }
 
@@ -547,7 +601,7 @@ public partial class MainWindow
         if (item is null || _library is null) { SetPreviewStatus(""); return; }
         if (item.IsLevel) { SetPreviewStatus("Levels are previewed by opening them in the World Editor."); return; }
         if (!_settings.Catalogue.AutoPreview && debounce) { SetPreviewStatus("Previews are off (Settings › Asset Catalogue)."); return; }
-        if (TryGetPreview(item.Key) is { } hit) { ShowPreview(item, hit.Model, hit.Min, hit.Max, _library.TryGetLoaded(item.Asset)); return; }
+        if (TryGetPreview(item.Key) is { } hit) { ShowPreview(item, hit.Model, hit.Min, hit.Max, hit.Pak ?? _library.TryGetLoaded(item.Asset)); return; }
         SetPreviewStatus("Decoding…");
         if (debounce) await Task.Delay(140); // let fast keyboard scrolling settle before decoding
         if (token != _previewToken) return;
@@ -566,7 +620,7 @@ public partial class MainWindow
             });
             if (token != _previewToken) return;
             var (min, max) = ProtoBounds(pak.Geometry, item.Prototype);
-            AddPreview(item.Key, model, min, max);
+            AddPreview(item.Key, model, min, max, pak);
             ShowPreview(item, model, min, max, pak);
             if (item.Thumbnail is null) StoreThumbnail(item, RenderThumbnail(model, min, max));
         }
@@ -587,26 +641,27 @@ public partial class MainWindow
         ApplyPreviewCamera();
         SetPreviewStatus("");
         if (pak is not null) ShowBrowserDetails(item, pak);
+        SetWorkspaceSubject(item, pak);
     }
 
     // Bounded LRU of preview meshes (Settings > Performance). Details are kept with the decoded pak only while cached.
-    private readonly LinkedList<(string Key, Model3DGroup Model, N.Vector3 Min, N.Vector3 Max)> _previewCache = new();
+    private readonly LinkedList<(string Key, Model3DGroup Model, N.Vector3 Min, N.Vector3 Max, LoadedPak? Pak)> _previewCache = new();
 
-    private (Model3DGroup Model, N.Vector3 Min, N.Vector3 Max)? TryGetPreview(string key)
+    private (Model3DGroup Model, N.Vector3 Min, N.Vector3 Max, LoadedPak? Pak)? TryGetPreview(string key)
     {
         for (var n = _previewCache.First; n is not null; n = n.Next)
             if (n.Value.Key == key)
             {
                 _previewCache.Remove(n);
                 _previewCache.AddFirst(n);
-                return (n.Value.Model, n.Value.Min, n.Value.Max);
+                return (n.Value.Model, n.Value.Min, n.Value.Max, n.Value.Pak);
             }
         return null;
     }
 
-    private void AddPreview(string key, Model3DGroup model, N.Vector3 min, N.Vector3 max)
+    private void AddPreview(string key, Model3DGroup model, N.Vector3 min, N.Vector3 max, LoadedPak? pak)
     {
-        _previewCache.AddFirst((key, model, min, max));
+        _previewCache.AddFirst((key, model, min, max, pak));
         TrimPreviewCache();
     }
 
@@ -741,7 +796,7 @@ public partial class MainWindow
         try
         {
             var archive = new FileInfo(Path.Combine(_buildDir, item.Asset.Archive));
-            var id = $"v1|{item.Key}|{archive.Length}|{archive.LastWriteTimeUtc.Ticks}";
+            var id = $"v2|{item.Key}|{archive.Length}|{archive.LastWriteTimeUtc.Ticks}";
             var hash = Convert.ToHexString(SHA1.HashData(Encoding.UTF8.GetBytes(id)));
             return Path.Combine(ThumbDir, hash + ".png");
         }

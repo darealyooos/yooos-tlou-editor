@@ -7,12 +7,15 @@
   (the editor reads the user's own installation at run time).
 .PARAMETER SelfContained
   Bundle the .NET runtime (larger ZIP, no runtime install needed).
+.PARAMETER ReuseWebFrom
+  Release ZIP whose web\ folder is copied as-is, for trees that do not contain src/Web.
 .EXAMPLE
   .\scripts\package.ps1
   .\scripts\package.ps1 -SelfContained
+  .\scripts\package.ps1 -ReuseWebFrom .\YooosTLOUEditor-0.9.0-win-x64.zip
 #>
 [CmdletBinding()]
-param([switch]$SelfContained, [string]$Runtime = 'win-x64')
+param([switch]$SelfContained, [string]$Runtime = 'win-x64', [string]$ReuseWebFrom)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -31,8 +34,21 @@ $common = @('-c', 'Release', '-r', $Runtime, "--self-contained:$($SelfContained.
             '-p:DebugType=none', '-p:DebugSymbols=false', '-p:GenerateDocumentationFile=false', '-nologo')
 dotnet publish (Join-Path $root 'src/App/App.csproj') @common -o $stage
 if ($LASTEXITCODE -ne 0) { throw "desktop publish failed ($LASTEXITCODE)" }
-dotnet publish (Join-Path $root 'src/Web/Web.csproj') @common -o (Join-Path $stage 'web')
-if ($LASTEXITCODE -ne 0) { throw "web publish failed ($LASTEXITCODE)" }
+$webProject = Join-Path $root 'src/Web/Web.csproj'
+if (Test-Path $webProject) {
+    dotnet publish $webProject @common -o (Join-Path $stage 'web')
+    if ($LASTEXITCODE -ne 0) { throw "web publish failed ($LASTEXITCODE)" }
+}
+elseif ($ReuseWebFrom) {
+    # The web editor is not in this tree: ship the one from an earlier release unchanged.
+    $unpack = Join-Path $root 'out/stage/reuse-web'
+    if (Test-Path $unpack) { Remove-Item -Recurse -Force $unpack }
+    Expand-Archive -Path $ReuseWebFrom -DestinationPath $unpack
+    if (-not (Test-Path (Join-Path $unpack 'web/YooosTLOUEditor.Web.exe'))) { throw "No web editor in $ReuseWebFrom" }
+    Copy-Item (Join-Path $unpack 'web') (Join-Path $stage 'web') -Recurse
+    Write-Host "Web editor reused from $ReuseWebFrom" -ForegroundColor Yellow
+}
+else { throw 'src/Web is not in this tree: pass -ReuseWebFrom <earlier release zip>.' }
 
 # Remove anything that is not needed to run.
 Get-ChildItem $stage -Recurse -Include '*.pdb', '*.xml', 'appsettings.Development.json', 'web.config' -File | Remove-Item -Force

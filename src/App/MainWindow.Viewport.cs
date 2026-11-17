@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -14,7 +15,7 @@ public partial class MainWindow
     private static readonly Color WlfColor = Color.FromRgb(92, 141, 184);
     private static readonly Color ScarColor = Color.FromRgb(181, 82, 59);
     private static readonly Color BoundaryColor = Color.FromRgb(226, 160, 72);
-    private static readonly Color SelectionColor = Color.FromRgb(232, 184, 110);
+    private static readonly Color SelectionColor = Color.FromRgb(160, 161, 255);
 
     private Point _lastMouse;
     private bool _looking, _panning, _orbiting;
@@ -35,6 +36,7 @@ public partial class MainWindow
     private void SetupViewport()
     {
         Viewport.Camera = _camera.Camera;
+        _camera.CameraChanged += () => Viewport.Camera = _camera.Camera;
         var lights = new Model3DGroup();
         lights.Children.Add(new AmbientLight(Color.FromRgb(120, 120, 125)));
         lights.Children.Add(new DirectionalLight(Color.FromRgb(200, 195, 185), new Vector3D(-0.4, -1, -0.3)));
@@ -47,7 +49,7 @@ public partial class MainWindow
         Viewport.Children.Add(_helperRoot);
         Viewport.Children.Add(_selectionVisual);
         Viewport.Children.Add(_gizmo.Visual);
-        _gridVisual.Content = Shapes.Model(Shapes.Grid(50, 1, 0, 0.02), Shapes.Emissive(Color.FromRgb(44, 50, 42)));
+        _gridVisual.Content = BuildGround();
         CompositionTarget.Rendering += OnFrame;
     }
 
@@ -86,13 +88,14 @@ public partial class MainWindow
             _zoomVelocity *= Math.Exp(-10 * dt);
             RefreshGizmo();
         }
+        if (_camera.Yaw != _axisYaw || _camera.Pitch != _axisPitch) DrawAxisGizmo();
         _frames++;
         if ((now - _fpsWindow).TotalSeconds >= 1)
         {
             int tris = _maps.Sum(m => m.Triangles);
             StatusFps.Text = $"{_frames / (now - _fpsWindow).TotalSeconds:0}";
             StatusTris.Text = _maps.Count == 0 ? "—" : $"{tris:N0} tris";
-            StatusCamera.Text = $"{_camera.Position.X:0.0}, {_camera.Position.Y:0.0}, {_camera.Position.Z:0.0}  ·  yaw {_camera.Yaw % 360:0}° pitch {_camera.Pitch:0}°";
+            StatusCamera.Text = $"{_camera.Position.X:0.0}, {_camera.Position.Y:0.0}, {_camera.Position.Z:0.0}  ·  yaw {_camera.Yaw % 360:0}° pitch {_camera.Pitch:0}°" + (_camera.Orthographic ? $"  ·  ortho {_camera.Ortho.Width:0.#} m" : "");
             _frames = 0; _fpsWindow = now;
         }
     }
@@ -171,7 +174,9 @@ public partial class MainWindow
         }
         if (_panning)
         {
-            double pk = 0.002 * Math.Max(5, (_gizmo.Visible ? (_gizmo.Origin - _camera.Position).Length : 20));
+            double pk = _camera.Orthographic
+                ? _camera.Ortho.Width / Math.Max(1, ViewSize.Width)
+                : 0.002 * Math.Max(5, (_gizmo.Visible ? (_gizmo.Origin - _camera.Position).Length : 20));
             _camera.Move(-_camera.Right * d.X * pk + _camera.Up * d.Y * pk);
             RefreshGizmo();
             return;
@@ -185,6 +190,13 @@ public partial class MainWindow
     private void OnViewportWheel(object sender, MouseWheelEventArgs e)
     {
         bool fast = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+        if (_camera.Orthographic)
+        {
+            // Orthographic: the wheel scales the visible width instead of moving the eye.
+            _camera.Zoom(Math.Pow(fast ? 0.997 : 0.9988, e.Delta * _settings.Viewport.ZoomSpeed));
+            RefreshGizmo();
+            return;
+        }
         double step = (fast ? 0.02 : 0.005) * e.Delta * _settings.Viewport.ZoomSpeed;
         if (_settings.Viewport.SmoothZoom) _zoomVelocity += step * 10; // integrated over ~0.1 s in OnFrame
         else { _camera.Move(_camera.Forward * step); RefreshGizmo(); }
@@ -302,6 +314,121 @@ public partial class MainWindow
         else if (!present) parent.Children.Remove(child);
     }
 
+    // ---------------------------------------------------------------- projection, view presets, orientation gizmo
+
+    private void OnProjectionChanged(object sender, RoutedEventArgs e)
+    {
+        if (ProjOrtho is null || _settings is null) return; // raised while the XAML is still loading
+        SetProjection(ProjOrtho.IsChecked == true);
+    }
+
+    private void OnMenuProjection(object sender, RoutedEventArgs e) => SetProjection(ReferenceEquals(sender, MenuOrthographic));
+
+    private void SetProjection(bool ortho)
+    {
+        if (ortho != _camera.Orthographic)
+        {
+            _zoomVelocity = 0;
+            double focus = ViewSize.Width > 0 ? Vector3D.DotProduct(ToPoint(ViewCenterPoint()) - _camera.Position, _camera.Forward) : 20;
+            _camera.SetOrthographic(ortho, Math.Clamp(focus, 1, 2000));
+            Status(ortho ? "Orthographic view: the wheel zooms, fly keys pan." : "Perspective view.");
+        }
+        ProjOrtho.IsChecked = ortho;
+        ProjPerspective.IsChecked = !ortho;
+        MenuOrthographic.IsChecked = ortho;
+        MenuPerspective.IsChecked = !ortho;
+        ViewLabel.Text = ortho ? "Orthographic" : "Perspective";
+        RefreshGizmo();
+    }
+
+    private static Point3D ToPoint(N.Vector3 v) => new(v.X, v.Y, v.Z);
+
+    private void OnViewPreset(object sender, RoutedEventArgs e)
+    {
+        switch ((sender as FrameworkElement)?.Tag as string)
+        {
+            case "top": LookAlong(new Vector3D(0, -1, 0)); break;
+            case "front": LookAlong(new Vector3D(0, 0, -1)); break;
+            case "right": LookAlong(new Vector3D(-1, 0, 0)); break;
+        }
+    }
+
+    /// <summary>Turns the camera to look along <paramref name="dir"/>, keeping the selection (or the point under the view centre) in view.</summary>
+    private void LookAlong(Vector3D dir)
+    {
+        if (_workspace != Workspace.World) SetWorkspace(Workspace.World);
+        _zoomVelocity = 0;
+        var focus = ToPoint(SelectedPosition() ?? ViewCenterPoint());
+        double dist = Math.Clamp((focus - _camera.Position).Length, 2, 2000);
+        double pitch = dir.Y < -0.99 ? -89 : dir.Y > 0.99 ? 89 : 0;
+        double yaw = Math.Abs(dir.Y) > 0.99 ? _camera.Yaw : Math.Atan2(dir.Z, dir.X) * 180 / Math.PI;
+        _camera.Set(_camera.Position, yaw, pitch);
+        _camera.Set(focus - _camera.Forward * dist, yaw, pitch);
+        RefreshGizmo();
+    }
+
+    private double _axisYaw = double.NaN, _axisPitch = double.NaN;
+
+    /// <summary>Orientation gizmo in the viewport corner: world axes as seen by the camera; click a ball to look along that axis.</summary>
+    private void DrawAxisGizmo()
+    {
+        if (AxisGizmo is null) return;
+        _axisYaw = _camera.Yaw; _axisPitch = _camera.Pitch;
+        AxisGizmo.Children.Clear();
+        double c = AxisGizmo.Width / 2, r = c - 11;
+        var right = _camera.Right; var up = _camera.Up; var fwd = _camera.Forward;
+        AxisGizmo.Children.Add(new System.Windows.Shapes.Ellipse { Width = 2 * c, Height = 2 * c, Fill = new SolidColorBrush(Color.FromArgb(0x40, 0x11, 0x13, 0x18)) });
+        string[] names = ["X", "Y", "Z"];
+        var axisBrushes = new[] { (SolidColorBrush)FindResource("AxisX"), (SolidColorBrush)FindResource("AxisY"), (SolidColorBrush)FindResource("AxisZ") };
+        // Far handles first so the nearest stay on top.
+        var handles = new List<(double Depth, int Axis, int Sign)>();
+        for (int a = 0; a < 3; a++)
+        {
+            double d = Vector3D.DotProduct(Gizmo.Axes[a], fwd);
+            handles.Add((d, a, 1));
+            handles.Add((-d, a, -1));
+        }
+        foreach (var (_, a, sign) in handles.OrderByDescending(h => h.Depth))
+        {
+            var axis = Gizmo.Axes[a] * sign;
+            double x = c + Vector3D.DotProduct(axis, right) * r, y = c - Vector3D.DotProduct(axis, up) * r;
+            var brush = axisBrushes[a];
+            if (sign > 0)
+                AxisGizmo.Children.Add(new System.Windows.Shapes.Line { X1 = c, Y1 = c, X2 = x, Y2 = y, Stroke = brush, StrokeThickness = 2, StrokeEndLineCap = PenLineCap.Round, IsHitTestVisible = false });
+            double size = sign > 0 ? 15 : 11;
+            string from = (sign > 0 ? "+" : "-") + names[a];
+            var ball = new Grid { Width = size, Height = size, Cursor = Cursors.Hand, ToolTip = $"View from {from}" };
+            ball.Children.Add(new System.Windows.Shapes.Ellipse
+            {
+                Fill = sign > 0 ? brush : new SolidColorBrush(Color.FromArgb(0x50, brush.Color.R, brush.Color.G, brush.Color.B)),
+                Stroke = brush, StrokeThickness = sign > 0 ? 0 : 1.2,
+            });
+            if (sign > 0)
+                ball.Children.Add(new TextBlock { Text = names[a], FontSize = 9, FontWeight = FontWeights.Bold, Foreground = (Brush)FindResource("Bg0"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, IsHitTestVisible = false });
+            var look = -axis;
+            ball.MouseLeftButtonDown += (_, e) => { LookAlong(look); e.Handled = true; };
+            System.Windows.Controls.Canvas.SetLeft(ball, x - size / 2);
+            System.Windows.Controls.Canvas.SetTop(ball, y - size / 2);
+            AxisGizmo.Children.Add(ball);
+        }
+    }
+
+    /// <summary>Ground grid: 1 m minor lines, 10 m major lines and the X (red) / Z (blue) axes through the origin.</summary>
+    private static Model3DGroup BuildGround()
+    {
+        var g = new Model3DGroup();
+        g.Children.Add(Shapes.Model(Shapes.Grid(50, 1, 0, 0.018, 10), Shapes.Emissive(Color.FromRgb(38, 42, 51))));
+        g.Children.Add(Shapes.Model(Shapes.Grid(50, 10, 0, 0.035), Shapes.Emissive(Color.FromRgb(58, 63, 77))));
+        var x = new MeshGeometry3D();
+        Shapes.Segment(x, new Point3D(-50, 0.002, 0), new Point3D(50, 0.002, 0), 0.05);
+        var z = new MeshGeometry3D();
+        Shapes.Segment(z, new Point3D(0, 0.002, -50), new Point3D(0, 0.002, 50), 0.05);
+        g.Children.Add(Shapes.Model(x, Shapes.Emissive(Color.FromRgb(122, 54, 52))));
+        g.Children.Add(Shapes.Model(z, Shapes.Emissive(Color.FromRgb(48, 74, 128))));
+        g.Freeze();
+        return g;
+    }
+
     // ---------------------------------------------------------------- picking
 
     /// <summary>World point under a viewport pixel: map triangles, then placed objects, then the ground plane.</summary>
@@ -314,7 +441,9 @@ public partial class MainWindow
         foreach (var o in _doc.Objects)
             if (ObjectHit(ray, o, best ?? float.MaxValue) is { } t) best = t;
         best ??= Raycast.Plane(ray, _maps.Count > 0 ? _maps.Min(m => m.BoundsMin.Y) : 0);
-        return ray.At(best is { } b && b < 2000 ? b : 15);
+        // Limits are measured from the eye (orthographic rays start RayStart metres behind it).
+        double eye = _camera.RayStart;
+        return ray.At(best is { } b && b - eye < 2000 ? b : (float)(eye + 15));
     }
 
     private N.Vector3 ViewCenterPoint() => PickPoint(new Point(ViewSize.Width / 2, ViewSize.Height / 2));
@@ -347,6 +476,7 @@ public partial class MainWindow
         if (item is not null) ShortcutSheet.Visibility = Visibility.Collapsed;
         UpdateSelectionVisuals();
         ShowProperties();
+        if (WsTabAssets?.IsChecked == true) RefreshWorkspacePanel(); // highlight the selection's asset card
     }
 
     private N.Vector3? SelectedPosition() => _selected switch

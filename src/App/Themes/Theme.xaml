@@ -2,33 +2,36 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
   <!--
-    Yooos TLOU Editor design system.
-    Palette: near-black charcoal, olive / concrete greys, warm paper text, a single restrained amber accent.
-    Rules: square corners (1px max radius), 1px hairlines, no drop shadows on panels, uppercase micro-labels
-    in Bahnschrift, body text in Segoe UI. Everything else in the app references these keys.
+    Yooos TLOU Editor design system (v2, "studio").
+    Palette: cool graphite surfaces, neutral text, one discreet violet-blue accent used for selection, focus and
+    the active tool. Rules: 3px corner radius at most, 1px hairlines, no glass or drop shadows on panels,
+    Segoe UI everywhere (Cascadia Mono for numbers), 16px stroke icons from the I.* geometries below.
+    Everything else in the app references these keys.
   -->
 
   <!-- ============================================================ tokens -->
-  <Color x:Key="C.Bg0">#0B0C0B</Color>
-  <Color x:Key="C.Bg1">#111311</Color>
-  <Color x:Key="C.Bg2">#161916</Color>
-  <Color x:Key="C.Bg3">#1C201C</Color>
-  <Color x:Key="C.Hover">#21261F</Color>
-  <Color x:Key="C.Input">#0D0F0D</Color>
-  <Color x:Key="C.Line">#222622</Color>
-  <Color x:Key="C.Line2">#2E342D</Color>
-  <Color x:Key="C.Line3">#424A3F</Color>
-  <Color x:Key="C.Text">#E6E0D2</Color>
-  <Color x:Key="C.Text2">#B3AD9E</Color>
-  <Color x:Key="C.Text3">#7E7D73</Color>
-  <Color x:Key="C.Text4">#5A5B53</Color>
-  <Color x:Key="C.Olive">#7A8461</Color>
-  <Color x:Key="C.OliveDeep">#262B21</Color>
-  <Color x:Key="C.Amber">#C9974F</Color>
-  <Color x:Key="C.AmberHi">#E0B472</Color>
-  <Color x:Key="C.AmberLo">#7D5F35</Color>
-  <Color x:Key="C.AmberWash">#2BC9974F</Color>
-  <Color x:Key="C.Danger">#C0583F</Color>
+  <Color x:Key="C.Bg0">#111318</Color>          <!-- app background, viewport surround -->
+  <Color x:Key="C.Bg1">#191C23</Color>          <!-- panels -->
+  <Color x:Key="C.Bg2">#20242D</Color>          <!-- secondary panels, headers -->
+  <Color x:Key="C.Bg3">#272C36</Color>          <!-- raised: cards, pressed tools -->
+  <Color x:Key="C.Hover">#2B303B</Color>
+  <Color x:Key="C.Input">#14161C</Color>
+  <Color x:Key="C.Line">#303541</Color>
+  <Color x:Key="C.Line2">#3A404D</Color>
+  <Color x:Key="C.Line3">#4D5464</Color>
+  <Color x:Key="C.Text">#E5E7EB</Color>
+  <Color x:Key="C.Text2">#BCC1CA</Color>
+  <Color x:Key="C.Text3">#9299A6</Color>
+  <Color x:Key="C.Text4">#656C7A</Color>
+  <Color x:Key="C.Accent">#7778E8</Color>
+  <Color x:Key="C.AccentHi">#9798F2</Color>
+  <Color x:Key="C.AccentLo">#4E4FB0</Color>
+  <Color x:Key="C.AccentWash">#337778E8</Color>
+  <Color x:Key="C.AccentSoft">#1A7778E8</Color>
+  <Color x:Key="C.Success">#5BAE84</Color>
+  <Color x:Key="C.Warning">#D6A54A</Color>
+  <Color x:Key="C.Danger">#E0705C</Color>
+  <Color x:Key="C.Star">#E2B84E</Color>
 
   <SolidColorBrush x:Key="Bg0" Color="{StaticResource C.Bg0}"/>
   <SolidColorBrush x:Key="Bg1" Color="{StaticResource C.Bg1}"/>
@@ -43,58 +46,131 @@
   <SolidColorBrush x:Key="Text2" Color="{StaticResource C.Text2}"/>
   <SolidColorBrush x:Key="Text3" Color="{StaticResource C.Text3}"/>
   <SolidColorBrush x:Key="Text4" Color="{StaticResource C.Text4}"/>
-  <SolidColorBrush x:Key="Olive" Color="{StaticResource C.Olive}"/>
-  <SolidColorBrush x:Key="OliveDeep" Color="{StaticResource C.OliveDeep}"/>
-  <SolidColorBrush x:Key="Amber" Color="{StaticResource C.Amber}"/>
-  <SolidColorBrush x:Key="AmberHi" Color="{StaticResource C.AmberHi}"/>
-  <SolidColorBrush x:Key="AmberLo" Color="{StaticResource C.AmberLo}"/>
-  <SolidColorBrush x:Key="AmberWash" Color="{StaticResource C.AmberWash}"/>
+  <SolidColorBrush x:Key="Accent" Color="{StaticResource C.Accent}"/>
+  <SolidColorBrush x:Key="AccentHi" Color="{StaticResource C.AccentHi}"/>
+  <SolidColorBrush x:Key="AccentLo" Color="{StaticResource C.AccentLo}"/>
+  <SolidColorBrush x:Key="AccentWash" Color="{StaticResource C.AccentWash}"/>
+  <SolidColorBrush x:Key="AccentSoft" Color="{StaticResource C.AccentSoft}"/>
+  <SolidColorBrush x:Key="Success" Color="{StaticResource C.Success}"/>
+  <SolidColorBrush x:Key="Warning" Color="{StaticResource C.Warning}"/>
   <SolidColorBrush x:Key="Danger" Color="{StaticResource C.Danger}"/>
-  <SolidColorBrush x:Key="AxisX" Color="#C2624F"/>
-  <SolidColorBrush x:Key="AxisY" Color="#8DA35E"/>
-  <SolidColorBrush x:Key="AxisZ" Color="#5E86B0"/>
+  <SolidColorBrush x:Key="Star" Color="{StaticResource C.Star}"/>
+  <SolidColorBrush x:Key="OnAccent" Color="#FFFFFF"/>
+  <SolidColorBrush x:Key="AxisX" Color="#E5625A"/>
+  <SolidColorBrush x:Key="AxisY" Color="#79C35A"/>
+  <SolidColorBrush x:Key="AxisZ" Color="#5A94F0"/>
+  <SolidColorBrush x:Key="TeamWlf" Color="#5C8DB8"/>
+  <SolidColorBrush x:Key="TeamScar" Color="#C0624A"/>
 
-  <FontFamily x:Key="Display">Bahnschrift, Segoe UI</FontFamily>
+  <FontFamily x:Key="Display">Segoe UI</FontFamily>
   <FontFamily x:Key="Body">Segoe UI</FontFamily>
   <FontFamily x:Key="Mono">Cascadia Mono, Consolas</FontFamily>
   <FontFamily x:Key="Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
   <Duration x:Key="Fast">0:0:0.12</Duration>
+  <CornerRadius x:Key="Radius">3</CornerRadius>
 
   <!-- Density-driven sizes (replaced at runtime by Settings > Appearance / Asset Catalogue). -->
   <sys:Double x:Key="RowHeight">34</sys:Double>
   <sys:Double x:Key="TileImageHeight">86</sys:Double>
 
-  <!-- Atmospheric viewport backdrop: dusk haze over near-black ground. -->
+  <!-- Viewport backdrop: a quiet graphite horizon. -->
   <LinearGradientBrush x:Key="ViewportSky" StartPoint="0,0" EndPoint="0,1">
-    <GradientStop Color="#1B201C" Offset="0"/>
-    <GradientStop Color="#141815" Offset="0.45"/>
-    <GradientStop Color="#0C0E0C" Offset="1"/>
+    <GradientStop Color="#232731" Offset="0"/>
+    <GradientStop Color="#1A1D24" Offset="0.5"/>
+    <GradientStop Color="#121419" Offset="1"/>
   </LinearGradientBrush>
-  <RadialGradientBrush x:Key="Vignette" Center="0.5,0.45" GradientOrigin="0.5,0.45" RadiusX="0.75" RadiusY="0.8">
-    <GradientStop Color="#00000000" Offset="0.55"/>
-    <GradientStop Color="#8C050605" Offset="1"/>
+  <RadialGradientBrush x:Key="Vignette" Center="0.5,0.45" GradientOrigin="0.5,0.45" RadiusX="0.8" RadiusY="0.85">
+    <GradientStop Color="#00000000" Offset="0.6"/>
+    <GradientStop Color="#40080A0E" Offset="1"/>
   </RadialGradientBrush>
+
+  <!-- ============================================================ icons (16 × 16 stroke geometries) -->
+  <Geometry x:Key="I.Select">M3.5,2 L3.5,13 L6.4,10.3 L8.6,14.6 L10.4,13.7 L8.3,9.5 L12.2,9.5 Z</Geometry>
+  <Geometry x:Key="I.Move">M8,1.5 L8,14.5 M1.5,8 L14.5,8 M6,3.5 L8,1.5 L10,3.5 M6,12.5 L8,14.5 L10,12.5 M3.5,6 L1.5,8 L3.5,10 M12.5,6 L14.5,8 L12.5,10</Geometry>
+  <Geometry x:Key="I.Rotate">M13.5,8 A5.5,5.5 0 1 1 11.9,4.1 M12.5,1.5 L12.5,4.6 L9.4,4.6</Geometry>
+  <Geometry x:Key="I.Scale">M2.5,7.5 L2.5,13.5 L8.5,13.5 M6.5,9.5 L13.5,2.5 M9,2.5 L13.5,2.5 L13.5,7</Geometry>
+  <Geometry x:Key="I.Boundary">M3,4.5 L10.5,2.5 L14,8.5 L9,14 L2,10.5 Z</Geometry>
+  <Geometry x:Key="I.Spawn">M8,14.5 C8,14.5 3,9.6 3,6.5 A5,5 0 0 1 13,6.5 C13,9.6 8,14.5 8,14.5 Z M8,8.2 A1.7,1.7 0 1 0 8,4.8 A1.7,1.7 0 1 0 8,8.2 Z</Geometry>
+  <Geometry x:Key="I.Grid">M2,2 L14,2 L14,14 L2,14 Z M2,6 L14,6 M2,10 L14,10 M6,2 L6,14 M10,2 L10,14</Geometry>
+  <Geometry x:Key="I.Map">M1.5,13.5 L6,5 L9,10.2 L11,7.2 L14.5,13.5 Z</Geometry>
+  <Geometry x:Key="I.Leaf">M3,13 C3,6.5 7,3 13.5,2.5 C13,9 9.5,13 3,13 Z M3,13 L9,7</Geometry>
+  <Geometry x:Key="I.Frame">M2,5.5 L2,2 L5.5,2 M10.5,2 L14,2 L14,5.5 M14,10.5 L14,14 L10.5,14 M5.5,14 L2,14 L2,10.5 M8,6 L8,10 M6,8 L10,8</Geometry>
+  <Geometry x:Key="I.Maximise">M2,6 L2,2 L6,2 M10,2 L14,2 L14,6 M14,10 L14,14 L10,14 M6,14 L2,14 L2,10</Geometry>
+  <Geometry x:Key="I.Restore">M6,2 L6,6 L2,6 M10,2 L10,6 L14,6 M14,10 L10,10 L10,14 M2,10 L6,10 L6,14</Geometry>
+  <Geometry x:Key="I.Search">M7,12 A5,5 0 1 0 7,2 A5,5 0 1 0 7,12 Z M10.6,10.6 L14,14</Geometry>
+  <Geometry x:Key="I.Star">M8,1.8 L9.9,5.8 L14.2,6.3 L11,9.2 L11.9,13.5 L8,11.3 L4.1,13.5 L5,9.2 L1.8,6.3 L6.1,5.8 Z</Geometry>
+  <Geometry x:Key="I.List">M5.5,4 L14,4 M5.5,8 L14,8 M5.5,12 L14,12 M2,4 L2.6,4 M2,8 L2.6,8 M2,12 L2.6,12</Geometry>
+  <Geometry x:Key="I.Tiles">M2.5,2.5 L7,2.5 L7,7 L2.5,7 Z M9,2.5 L13.5,2.5 L13.5,7 L9,7 Z M2.5,9 L7,9 L7,13.5 L2.5,13.5 Z M9,9 L13.5,9 L13.5,13.5 L9,13.5 Z</Geometry>
+  <Geometry x:Key="I.Folder">M1.5,4 L1.5,12.5 L14.5,12.5 L14.5,5 L7.8,5 L6.3,3 L2.5,3 Z</Geometry>
+  <Geometry x:Key="I.Archive">M1.5,3 L14.5,3 L14.5,6 L1.5,6 Z M2.5,6 L2.5,13.5 L13.5,13.5 L13.5,6 M6.5,8.5 L9.5,8.5</Geometry>
+  <Geometry x:Key="I.Cube">M2,4.6 L8,1.5 L14,4.6 L14,11.4 L8,14.5 L2,11.4 Z M2,4.6 L8,7.7 L14,4.6 M8,7.7 L8,14.5</Geometry>
+  <Geometry x:Key="I.Building">M3,14 L3,2.5 L10,2.5 L10,14 M10,6.5 L13,6.5 L13,14 M1.5,14 L14.5,14 M5.5,5 L7.5,5 M5.5,8 L7.5,8 M5.5,11 L7.5,11</Geometry>
+  <Geometry x:Key="I.User">M8,8 A3,3 0 1 0 8,2 A3,3 0 1 0 8,8 Z M2.5,14.5 C2.5,11.2 5,9.6 8,9.6 C11,9.6 13.5,11.2 13.5,14.5</Geometry>
+  <Geometry x:Key="I.Crosshair">M8,14 A6,6 0 1 0 8,2 A6,6 0 1 0 8,14 Z M8,0.8 L8,4.2 M8,11.8 L8,15.2 M0.8,8 L4.2,8 M11.8,8 L15.2,8</Geometry>
+  <Geometry x:Key="I.Car">M2,11 L2,8 L3.6,4.5 L12.4,4.5 L14,8 L14,11 Z M2,8 L14,8 M4.5,11 L4.5,13 M11.5,11 L11.5,13</Geometry>
+  <Geometry x:Key="I.Globe">M8,14.5 A6.5,6.5 0 1 0 8,1.5 A6.5,6.5 0 1 0 8,14.5 Z M1.5,8 L14.5,8 M8,1.5 C5.4,4 5.4,12 8,14.5 M8,1.5 C10.6,4 10.6,12 8,14.5</Geometry>
+  <Geometry x:Key="I.Layers">M8,1.5 L14.5,5 L8,8.5 L1.5,5 Z M1.5,8 L8,11.5 L14.5,8 M1.5,11 L8,14.5 L14.5,11</Geometry>
+  <Geometry x:Key="I.Flag">M3,14.5 L3,2 M3,2.5 L12.5,2.5 L10.5,5.5 L12.5,8.5 L3,8.5</Geometry>
+  <Geometry x:Key="I.Volume">M2,4.6 L8,1.5 L14,4.6 L14,11.4 L8,14.5 L2,11.4 Z M2,4.6 L8,7.7 L14,4.6 M8,7.7 L8,14.5 M2,11.4 L8,8.3</Geometry>
+  <Geometry x:Key="I.Image">M2,2.5 L14,2.5 L14,13.5 L2,13.5 Z M2,11 L6,7 L9,10 L11,8 L14,11 M10.5,6.2 A1,1 0 1 0 10.5,4.2 A1,1 0 1 0 10.5,6.2 Z</Geometry>
+  <Geometry x:Key="I.Material">M8,14.5 A6.5,6.5 0 1 0 8,1.5 A6.5,6.5 0 1 0 8,14.5 Z M4.5,5 A4.5,4.5 0 0 1 8,3.5</Geometry>
+  <Geometry x:Key="I.Mesh">M8,1.8 L14.2,13.5 L1.8,13.5 Z M8,1.8 L8,13.5 M4.9,7.6 L11.1,7.6 M4.9,7.6 L8,13.5 L11.1,7.6</Geometry>
+  <Geometry x:Key="I.ChevronRight">M6,4 L10,8 L6,12</Geometry>
+  <Geometry x:Key="I.ChevronDown">M4,6 L8,10 L12,6</Geometry>
+  <Geometry x:Key="I.Close">M4,4 L12,12 M12,4 L4,12</Geometry>
+  <Geometry x:Key="I.Copy">M5.5,5.5 L13.5,5.5 L13.5,13.5 L5.5,13.5 Z M3.5,10.5 L2.5,10.5 L2.5,2.5 L10.5,2.5 L10.5,3.5</Geometry>
+  <Geometry x:Key="I.Trash">M2.5,4 L13.5,4 M6,4 L6,2.5 L10,2.5 L10,4 M4,4 L4.8,14 L11.2,14 L12,4</Geometry>
+  <Geometry x:Key="I.Camera">M1.5,5 L4.5,5 L6,3 L10,3 L11.5,5 L14.5,5 L14.5,13 L1.5,13 Z M8,11 A2.5,2.5 0 1 0 8,6 A2.5,2.5 0 1 0 8,11 Z</Geometry>
+  <Geometry x:Key="I.Square">M2.5,2.5 L13.5,2.5 L13.5,13.5 L2.5,13.5 Z</Geometry>
+  <Geometry x:Key="I.PanelBottom">M2,2.5 L14,2.5 L14,13.5 L2,13.5 Z M2,9.5 L14,9.5</Geometry>
+  <Geometry x:Key="I.Undo">M5,3 L2,6 L5,9 M2,6 L10,6 A4,4 0 0 1 10,14 L7,14</Geometry>
+  <Geometry x:Key="I.Redo">M11,3 L14,6 L11,9 M14,6 L6,6 A4,4 0 0 0 6,14 L9,14</Geometry>
+  <Geometry x:Key="I.Help">M8,14.5 A6.5,6.5 0 1 0 8,1.5 A6.5,6.5 0 1 0 8,14.5 Z M6,6.2 A2,2 0 1 1 8.6,8.1 C8.1,8.4 8,8.8 8,9.6 M8,11.9 L8,12</Geometry>
+  <Geometry x:Key="I.Keyboard">M1.5,4 L14.5,4 L14.5,12 L1.5,12 Z M4,6.5 L4.2,6.5 M6.5,6.5 L6.7,6.5 M9,6.5 L9.2,6.5 M11.5,6.5 L11.7,6.5 M5,9.5 L11,9.5</Geometry>
+  <Geometry x:Key="I.Plus">M8,3 L8,13 M3,8 L13,8</Geometry>
+  <Geometry x:Key="I.File">M3.5,1.5 L9.5,1.5 L12.5,4.5 L12.5,14.5 L3.5,14.5 Z M9.5,1.5 L9.5,4.5 L12.5,4.5</Geometry>
+  <Geometry x:Key="I.Save">M2.5,2.5 L11.5,2.5 L13.5,4.5 L13.5,13.5 L2.5,13.5 Z M5,2.5 L5,6 L10.5,6 L10.5,2.5 M5,13.5 L5,9.5 L11,9.5 L11,13.5</Geometry>
+  <Geometry x:Key="I.FolderOpen">M1.5,4 L1.5,12.5 L13,12.5 L14.5,7 L4,7 L2.5,12.5 M1.5,4 L1.5,3 L6.3,3 L7.8,5 L12.5,5 L12.5,7</Geometry>
+  <Geometry x:Key="I.Eye">M1.5,8 C3,4.8 5.3,3.5 8,3.5 C10.7,3.5 13,4.8 14.5,8 C13,11.2 10.7,12.5 8,12.5 C5.3,12.5 3,11.2 1.5,8 Z M8,10 A2,2 0 1 0 8,6 A2,2 0 1 0 8,10 Z</Geometry>
+
+  <!-- A 16 px stroke icon. Its colour follows the nearest control's Foreground (hover / selected states). -->
+  <Style x:Key="Icon" TargetType="Path">
+    <Setter Property="Width" Value="16"/>
+    <Setter Property="Height" Value="16"/>
+    <Setter Property="Stretch" Value="None"/>
+    <Setter Property="StrokeThickness" Value="1.3"/>
+    <Setter Property="StrokeLineJoin" Value="Round"/>
+    <Setter Property="StrokeStartLineCap" Value="Round"/>
+    <Setter Property="StrokeEndLineCap" Value="Round"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+    <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Control}}"/>
+  </Style>
 
   <!-- ============================================================ text -->
   <Style TargetType="TextBlock">
     <Setter Property="Foreground" Value="{StaticResource Text}"/>
     <Setter Property="FontFamily" Value="{StaticResource Body}"/>
   </Style>
-  <!-- Uppercase micro label used for section and field captions. -->
+  <!-- Small caption used for field labels and status bar captions. -->
   <Style x:Key="Micro" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource Display}"/>
     <Setter Property="FontSize" Value="10.5"/>
-    <Setter Property="Foreground" Value="{StaticResource Text3}"/>
+    <Setter Property="Foreground" Value="{StaticResource Text4}"/>
     <Setter Property="VerticalAlignment" Value="Center"/>
   </Style>
+  <!-- Panel title (Scene Hierarchy, Asset Browser, Inspector…). -->
   <Style x:Key="MicroAccent" TargetType="TextBlock" BasedOn="{StaticResource Micro}">
-    <Setter Property="Foreground" Value="{StaticResource Amber}"/>
+    <Setter Property="Foreground" Value="{StaticResource Text2}"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="FontSize" Value="11"/>
   </Style>
+  <Style x:Key="PanelTitle" TargetType="TextBlock" BasedOn="{StaticResource MicroAccent}"/>
   <Style x:Key="Title" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource Display}"/>
-    <Setter Property="FontWeight" Value="Light"/>
-    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="FontSize" Value="18"/>
     <Setter Property="Foreground" Value="{StaticResource Text}"/>
     <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
   </Style>
@@ -109,26 +185,33 @@
     <Setter Property="VerticalAlignment" Value="Center"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
   </Style>
+  <!-- Count / number badge next to panel titles. -->
+  <Style x:Key="Count" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource Mono}"/>
+    <Setter Property="FontSize" Value="10.5"/>
+    <Setter Property="Foreground" Value="{StaticResource Text4}"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+  </Style>
 
   <!-- ============================================================ focus -->
   <Style x:Key="FocusRing">
     <Setter Property="Control.Template">
       <Setter.Value>
         <ControlTemplate>
-          <Rectangle Stroke="{StaticResource AmberLo}" StrokeThickness="1" Margin="-1" SnapsToDevicePixels="True"/>
+          <Border BorderBrush="{StaticResource AccentLo}" BorderThickness="1" CornerRadius="3" Margin="-1" SnapsToDevicePixels="True"/>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
   </Style>
 
   <!-- ============================================================ buttons -->
-  <!-- Default: quiet outlined button. -->
+  <!-- Default: quiet filled button. -->
   <Style TargetType="Button">
-    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Background" Value="{StaticResource Bg3}"/>
     <Setter Property="Foreground" Value="{StaticResource Text}"/>
     <Setter Property="BorderBrush" Value="{StaticResource Line2}"/>
     <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="Padding" Value="12,6"/>
+    <Setter Property="Padding" Value="11,5"/>
     <Setter Property="FontFamily" Value="{StaticResource Display}"/>
     <Setter Property="FontSize" Value="11.5"/>
     <Setter Property="Cursor" Value="Hand"/>
@@ -137,7 +220,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+          <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3"
                   BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" RecognizesAccessKey="True"/>
           </Border>
@@ -147,10 +230,10 @@
               <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Line3}"/>
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg0}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg2}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Opacity" Value="0.35"/>
+              <Setter Property="Opacity" Value="0.4"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -158,30 +241,30 @@
     </Setter>
   </Style>
 
-  <!-- Primary: the one amber call to action per area. -->
+  <!-- Primary: the one accent call to action per area. -->
   <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-    <Setter Property="Background" Value="{StaticResource Amber}"/>
-    <Setter Property="BorderBrush" Value="{StaticResource Amber}"/>
-    <Setter Property="Foreground" Value="#14120E"/>
+    <Setter Property="Background" Value="{StaticResource Accent}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+    <Setter Property="Foreground" Value="{StaticResource OnAccent}"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+          <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="3"
                   BorderThickness="1" Padding="{TemplateBinding Padding}">
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" RecognizesAccessKey="True"/>
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource AmberHi}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AmberHi}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentHi}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AccentHi}"/>
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource AmberLo}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentLo}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg3}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Line2}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Line}"/>
               <Setter Property="Foreground" Value="{StaticResource Text4}"/>
             </Trigger>
           </ControlTemplate.Triggers>
@@ -190,15 +273,16 @@
     </Setter>
   </Style>
 
-  <!-- Ghost: borderless text/icon button for toolbars and the navigation bar. -->
+  <!-- Ghost: borderless text/icon button for toolbars and panel headers. -->
   <Style x:Key="Ghost" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+    <Setter Property="Background" Value="Transparent"/>
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="Foreground" Value="{StaticResource Text2}"/>
-    <Setter Property="Padding" Value="8,5"/>
+    <Setter Property="Foreground" Value="{StaticResource Text3}"/>
+    <Setter Property="Padding" Value="7,4"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Border x:Name="bd" Background="Transparent" Padding="{TemplateBinding Padding}">
+          <Border x:Name="bd" Background="Transparent" CornerRadius="3" Padding="{TemplateBinding Padding}">
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" RecognizesAccessKey="True"/>
           </Border>
           <ControlTemplate.Triggers>
@@ -217,50 +301,44 @@
       </Setter.Value>
     </Setter>
   </Style>
-
-  <!-- Navigation dropdown trigger (Viewport / Tools / Settings / Scene). -->
-  <Style x:Key="NavMenu" TargetType="Button" BasedOn="{StaticResource Ghost}">
-    <Setter Property="FontSize" Value="12.5"/>
-    <Setter Property="Padding" Value="12,0"/>
-    <Setter Property="Height" Value="40"/>
-    <Setter Property="ContentTemplate">
-      <Setter.Value>
-        <DataTemplate>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" FontFamily="{StaticResource Display}" VerticalAlignment="Center"/>
-            <TextBlock Text="&#xE70D;" Style="{StaticResource Glyph}" FontSize="8" Margin="7,2,0,0" Foreground="{StaticResource Text4}"/>
-          </StackPanel>
-        </DataTemplate>
-      </Setter.Value>
-    </Setter>
+  <!-- Square icon-only ghost button (26 × 24). -->
+  <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource Ghost}">
+    <Setter Property="Width" Value="26"/>
+    <Setter Property="Height" Value="24"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
   </Style>
 
-  <!-- Workspace tab in the navigation bar: amber underline when active. -->
+  <!-- Menu bar entry (File / Edit / View / Tools / Help). -->
+  <Style x:Key="NavMenu" TargetType="Button" BasedOn="{StaticResource Ghost}">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Foreground" Value="{StaticResource Text2}"/>
+    <Setter Property="Padding" Value="9,3"/>
+    <Setter Property="Margin" Value="1,0"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+  </Style>
+
+  <!-- Workspace tab in the title bar: segmented, accent underline when active. -->
   <Style x:Key="NavTab" TargetType="RadioButton">
     <Setter Property="Foreground" Value="{StaticResource Text3}"/>
     <Setter Property="FontFamily" Value="{StaticResource Display}"/>
-    <Setter Property="FontSize" Value="12.5"/>
+    <Setter Property="FontSize" Value="11.5"/>
     <Setter Property="Cursor" Value="Hand"/>
     <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="RadioButton">
-          <Grid Background="Transparent" Height="40">
-            <ContentPresenter Margin="12,0" VerticalAlignment="Center"/>
-            <Rectangle x:Name="bar" Height="2" VerticalAlignment="Bottom" Margin="12,0" Fill="{StaticResource Amber}" Opacity="0"/>
-          </Grid>
+          <Border x:Name="bd" Background="Transparent" CornerRadius="3" Padding="10,0" Height="24" Margin="1,0">
+            <ContentPresenter VerticalAlignment="Center"/>
+          </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="Foreground" Value="{StaticResource Text}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Hover}"/>
             </Trigger>
             <Trigger Property="IsChecked" Value="True">
               <Setter Property="Foreground" Value="{StaticResource Text}"/>
-              <Trigger.EnterActions>
-                <BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="bar" Storyboard.TargetProperty="Opacity" To="1" Duration="{StaticResource Fast}"/></Storyboard></BeginStoryboard>
-              </Trigger.EnterActions>
-              <Trigger.ExitActions>
-                <BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetName="bar" Storyboard.TargetProperty="Opacity" To="0" Duration="{StaticResource Fast}"/></Storyboard></BeginStoryboard>
-              </Trigger.ExitActions>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg3}"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -268,19 +346,19 @@
     </Setter>
   </Style>
 
-  <!-- Segmented choice (source selector, list/grid). -->
+  <!-- Segmented choice (source selector, list/grid, perspective/ortho). Put inside a "SegmentBox" border. -->
   <Style x:Key="Segment" TargetType="RadioButton">
     <Setter Property="Foreground" Value="{StaticResource Text3}"/>
     <Setter Property="FontFamily" Value="{StaticResource Display}"/>
     <Setter Property="FontSize" Value="11"/>
     <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="Padding" Value="0,6"/>
+    <Setter Property="Padding" Value="0,4"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="RadioButton">
-          <Border x:Name="bd" Background="Transparent" Padding="{TemplateBinding Padding}" BorderBrush="Transparent" BorderThickness="0,0,0,1">
+          <Border x:Name="bd" Background="Transparent" CornerRadius="2" Padding="{TemplateBinding Padding}" Margin="1">
             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
           </Border>
           <ControlTemplate.Triggers>
@@ -291,7 +369,42 @@
             <Trigger Property="IsChecked" Value="True">
               <Setter Property="Foreground" Value="{StaticResource Text}"/>
               <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg3}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Amber}"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="SegmentBox" TargetType="Border">
+    <Setter Property="Background" Value="{StaticResource Input}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="3"/>
+  </Style>
+
+  <!-- Tab of a docked panel (Asset Workspace). -->
+  <Style x:Key="PanelTab" TargetType="RadioButton">
+    <Setter Property="Foreground" Value="{StaticResource Text3}"/>
+    <Setter Property="FontSize" Value="11.5"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="RadioButton">
+          <Grid Background="Transparent">
+            <Border x:Name="bd" Background="Transparent" Padding="11,0">
+              <ContentPresenter VerticalAlignment="Center"/>
+            </Border>
+            <Rectangle x:Name="bar" Height="2" VerticalAlignment="Bottom" Fill="{StaticResource Accent}" Opacity="0"/>
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Foreground" Value="{StaticResource Text}"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter Property="Foreground" Value="{StaticResource Text}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg1}"/>
+              <Setter TargetName="bar" Property="Opacity" Value="1"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -299,7 +412,7 @@
     </Setter>
   </Style>
 
-  <!-- Category chip. -->
+  <!-- Category chip (kept for code that still builds chips). -->
   <Style x:Key="Chip" TargetType="RadioButton">
     <Setter Property="Foreground" Value="{StaticResource Text3}"/>
     <Setter Property="FontSize" Value="11"/>
@@ -309,7 +422,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="RadioButton">
-          <Border x:Name="bd" Background="Transparent" BorderBrush="{StaticResource Line2}" BorderThickness="1" Padding="8,3">
+          <Border x:Name="bd" Background="Transparent" BorderBrush="{StaticResource Line2}" BorderThickness="1" CornerRadius="3" Padding="8,3">
             <ContentPresenter VerticalAlignment="Center"/>
           </Border>
           <ControlTemplate.Triggers>
@@ -318,9 +431,69 @@
               <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Line3}"/>
             </Trigger>
             <Trigger Property="IsChecked" Value="True">
-              <Setter Property="Foreground" Value="{StaticResource AmberHi}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AmberLo}"/>
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource AmberWash}"/>
+              <Setter Property="Foreground" Value="{StaticResource Text}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AccentLo}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentWash}"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Viewport tool (Select / Move / Rotate / Scale / Boundary): square, icon + key badge, accent when active. -->
+  <Style x:Key="Tool" TargetType="ToggleButton">
+    <Setter Property="Foreground" Value="{StaticResource Text2}"/>
+    <Setter Property="FontFamily" Value="{StaticResource Display}"/>
+    <Setter Property="FontSize" Value="11.5"/>
+    <Setter Property="Width" Value="30"/>
+    <Setter Property="Height" Value="26"/>
+    <Setter Property="Margin" Value="1,0"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ToggleButton">
+          <Border x:Name="bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="3">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Hover}"/>
+              <Setter Property="Foreground" Value="{StaticResource Text}"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentWash}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AccentLo}"/>
+              <Setter Property="Foreground" Value="{StaticResource AccentHi}"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!-- Toggle with text / icon (layer toggles, favourites): highlighted fill when on. -->
+  <Style x:Key="IconToggle" TargetType="ToggleButton">
+    <Setter Property="Foreground" Value="{StaticResource Text4}"/>
+    <Setter Property="FontFamily" Value="{StaticResource Display}"/>
+    <Setter Property="FontSize" Value="11.5"/>
+    <Setter Property="Padding" Value="7,4"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ToggleButton">
+          <Border x:Name="bd" Background="Transparent" CornerRadius="3" Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter Property="Foreground" Value="{StaticResource Text2}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg3}"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Hover}"/>
+              <Setter Property="Foreground" Value="{StaticResource Text}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Opacity" Value="0.35"/>
@@ -330,57 +503,7 @@
       </Setter.Value>
     </Setter>
   </Style>
-
-  <!-- Viewport tool toggle (Move / Rotate / Scale / Boundary) and toggle chips. -->
-  <Style x:Key="Tool" TargetType="ToggleButton">
-    <Setter Property="Foreground" Value="{StaticResource Text2}"/>
-    <Setter Property="FontFamily" Value="{StaticResource Display}"/>
-    <Setter Property="FontSize" Value="11.5"/>
-    <Setter Property="Padding" Value="10,5"/>
-    <Setter Property="Cursor" Value="Hand"/>
-    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ToggleButton">
-          <Border x:Name="bd" Background="Transparent" Padding="{TemplateBinding Padding}">
-            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="#33FFFFFF"/>
-              <Setter Property="Foreground" Value="{StaticResource Text}"/>
-            </Trigger>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource Amber}"/>
-              <Setter Property="Foreground" Value="#14120E"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-  <Style x:Key="IconToggle" TargetType="ToggleButton" BasedOn="{StaticResource Tool}">
-    <Setter Property="Padding" Value="7,5"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ToggleButton">
-          <Border x:Name="bd" Background="Transparent" Padding="{TemplateBinding Padding}">
-            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource Hover}"/>
-              <Setter Property="Foreground" Value="{StaticResource Text}"/>
-            </Trigger>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter Property="Foreground" Value="{StaticResource Amber}"/>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-  <!-- On/off switch used in Settings and overlay chips. -->
+  <!-- On/off switch used in Settings. -->
   <Style x:Key="Switch" TargetType="CheckBox">
     <Setter Property="Foreground" Value="{StaticResource Text2}"/>
     <Setter Property="Cursor" Value="Hand"/>
@@ -392,20 +515,47 @@
           <Grid Background="Transparent">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <ContentPresenter VerticalAlignment="Center" Margin="0,0,12,0"/>
-            <Border x:Name="track" Grid.Column="1" Width="28" Height="14" BorderBrush="{StaticResource Line3}" BorderThickness="1" Background="{StaticResource Input}">
-              <Rectangle x:Name="knob" Width="8" Height="8" Fill="{StaticResource Text3}" HorizontalAlignment="Left" Margin="2,0"/>
+            <Border x:Name="track" Grid.Column="1" Width="30" Height="16" CornerRadius="8" BorderBrush="{StaticResource Line3}" BorderThickness="1" Background="{StaticResource Input}">
+              <Ellipse x:Name="knob" Width="10" Height="10" Fill="{StaticResource Text3}" HorizontalAlignment="Left" Margin="2,0"/>
             </Border>
           </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="IsChecked" Value="True">
               <Setter TargetName="knob" Property="HorizontalAlignment" Value="Right"/>
-              <Setter TargetName="knob" Property="Fill" Value="#14120E"/>
-              <Setter TargetName="track" Property="Background" Value="{StaticResource Amber}"/>
-              <Setter TargetName="track" Property="BorderBrush" Value="{StaticResource Amber}"/>
+              <Setter TargetName="knob" Property="Fill" Value="{StaticResource OnAccent}"/>
+              <Setter TargetName="track" Property="Background" Value="{StaticResource Accent}"/>
+              <Setter TargetName="track" Property="BorderBrush" Value="{StaticResource Accent}"/>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="Foreground" Value="{StaticResource Text}"/>
             </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <!-- Compact check box (inspector booleans). -->
+  <Style TargetType="CheckBox">
+    <Setter Property="Foreground" Value="{StaticResource Text2}"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="CheckBox">
+          <StackPanel Orientation="Horizontal" Background="Transparent">
+            <Border x:Name="box" Width="14" Height="14" CornerRadius="3" BorderBrush="{StaticResource Line3}" BorderThickness="1" Background="{StaticResource Input}" VerticalAlignment="Center">
+              <Path x:Name="tick" Data="M3,7 L6,10 L11,4" Stroke="{StaticResource OnAccent}" StrokeThickness="1.6" StrokeEndLineCap="Round" StrokeStartLineCap="Round" StrokeLineJoin="Round" Width="14" Height="14" Margin="-1" Visibility="Hidden"/>
+            </Border>
+            <ContentPresenter VerticalAlignment="Center" Margin="7,0,0,0"/>
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="tick" Property="Visibility" Value="Visible"/>
+              <Setter TargetName="box" Property="Background" Value="{StaticResource Accent}"/>
+              <Setter TargetName="box" Property="BorderBrush" Value="{StaticResource Accent}"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="box" Property="BorderBrush" Value="{StaticResource AccentHi}"/></Trigger>
+            <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -416,27 +566,27 @@
   <Style TargetType="TextBox">
     <Setter Property="Background" Value="{StaticResource Input}"/>
     <Setter Property="Foreground" Value="{StaticResource Text}"/>
-    <Setter Property="BorderBrush" Value="{StaticResource Line2}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
     <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="Padding" Value="6,4"/>
+    <Setter Property="Padding" Value="6,3"/>
     <Setter Property="FontSize" Value="12"/>
-    <Setter Property="CaretBrush" Value="{StaticResource AmberHi}"/>
-    <Setter Property="SelectionBrush" Value="{StaticResource Amber}"/>
-    <Setter Property="SelectionOpacity" Value="0.35"/>
+    <Setter Property="CaretBrush" Value="{StaticResource AccentHi}"/>
+    <Setter Property="SelectionBrush" Value="{StaticResource Accent}"/>
+    <Setter Property="SelectionOpacity" Value="0.4"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="TextBox">
-          <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Focusable="False" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+          <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}" VerticalAlignment="Center" Focusable="False" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
               <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Line3}"/>
             </Trigger>
             <Trigger Property="IsKeyboardFocused" Value="True">
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Amber}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Accent}"/>
             </Trigger>
             <Trigger Property="IsReadOnly" Value="True">
               <Setter TargetName="bd" Property="Background" Value="Transparent"/>
@@ -447,15 +597,15 @@
     </Setter>
   </Style>
 
-  <!-- Slim scrollbars: a 6px thumb, no arrows. -->
+  <!-- Slim scrollbars: an 6px rounded thumb, no arrows. -->
   <Style x:Key="ScrollThumb" TargetType="Thumb">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Thumb">
-          <Border x:Name="t" Background="{StaticResource Line3}" Opacity="0.7"/>
+          <Border x:Name="t" Background="{StaticResource Line3}" CornerRadius="3" Opacity="0.6"/>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="t" Property="Opacity" Value="1"/></Trigger>
-            <Trigger Property="IsDragging" Value="True"><Setter TargetName="t" Property="Background" Value="{StaticResource AmberLo}"/></Trigger>
+            <Trigger Property="IsDragging" Value="True"><Setter TargetName="t" Property="Background" Value="{StaticResource Accent}"/></Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -463,12 +613,12 @@
   </Style>
   <Style TargetType="ScrollBar">
     <Setter Property="Background" Value="Transparent"/>
-    <Setter Property="Width" Value="8"/>
-    <Setter Property="MinWidth" Value="8"/>
+    <Setter Property="Width" Value="9"/>
+    <Setter Property="MinWidth" Value="9"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ScrollBar">
-          <Track x:Name="PART_Track" IsDirectionReversed="True" Margin="1,2">
+          <Track x:Name="PART_Track" IsDirectionReversed="True" Margin="2,2">
             <Track.Thumb><Thumb Style="{StaticResource ScrollThumb}"/></Track.Thumb>
           </Track>
         </ControlTemplate>
@@ -478,12 +628,12 @@
       <Trigger Property="Orientation" Value="Horizontal">
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="MinWidth" Value="0"/>
-        <Setter Property="Height" Value="8"/>
-        <Setter Property="MinHeight" Value="8"/>
+        <Setter Property="Height" Value="9"/>
+        <Setter Property="MinHeight" Value="9"/>
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="ScrollBar">
-              <Track x:Name="PART_Track" IsDirectionReversed="False" Margin="2,1">
+              <Track x:Name="PART_Track" IsDirectionReversed="False" Margin="2,2">
                 <Track.Thumb><Thumb Style="{StaticResource ScrollThumb}"/></Track.Thumb>
               </Track>
             </ControlTemplate>
@@ -499,12 +649,14 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ToggleButton">
-          <Border x:Name="bd" Background="{StaticResource Input}" BorderBrush="{StaticResource Line2}" BorderThickness="1">
-            <TextBlock Text="&#xE70D;" Style="{StaticResource Glyph}" FontSize="8" HorizontalAlignment="Right" Margin="0,0,8,0" Foreground="{StaticResource Text3}"/>
+          <Border x:Name="bd" Background="{StaticResource Input}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="3">
+            <Path Data="{StaticResource I.ChevronDown}" Style="{StaticResource Icon}" Stroke="{StaticResource Text3}" HorizontalAlignment="Right" Margin="0,0,5,0" RenderTransformOrigin="0.5,0.5">
+              <Path.RenderTransform><ScaleTransform ScaleX="0.75" ScaleY="0.75"/></Path.RenderTransform>
+            </Path>
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Line3}"/></Trigger>
-            <Trigger Property="IsChecked" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Amber}"/></Trigger>
+            <Trigger Property="IsChecked" Value="True"><Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Accent}"/></Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -513,7 +665,7 @@
   <Style TargetType="ComboBox">
     <Setter Property="Foreground" Value="{StaticResource Text}"/>
     <Setter Property="FontSize" Value="12"/>
-    <Setter Property="MinHeight" Value="26"/>
+    <Setter Property="MinHeight" Value="24"/>
     <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}"/>
     <Setter Property="Template">
       <Setter.Value>
@@ -523,7 +675,7 @@
             <ContentPresenter IsHitTestVisible="False" Margin="7,0,24,0" VerticalAlignment="Center"
                               Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"/>
             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
-              <Border Background="{StaticResource Bg2}" BorderBrush="{StaticResource Line3}" BorderThickness="1" Margin="0,2,0,0"
+              <Border Background="{StaticResource Bg2}" BorderBrush="{StaticResource Line2}" BorderThickness="1" CornerRadius="3" Margin="0,2,0,0" Padding="0,3"
                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
                 <ScrollViewer><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/></ScrollViewer>
               </Border>
@@ -538,7 +690,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ComboBoxItem">
-          <Border x:Name="bd" Background="Transparent" Padding="8,5">
+          <Border x:Name="bd" Background="Transparent" Padding="8,4" Margin="3,0" CornerRadius="2">
             <ContentPresenter/>
           </Border>
           <ControlTemplate.Triggers>
@@ -547,7 +699,7 @@
               <Setter Property="Foreground" Value="{StaticResource Text}"/>
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
-              <Setter Property="Foreground" Value="{StaticResource AmberHi}"/>
+              <Setter Property="Foreground" Value="{StaticResource AccentHi}"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -556,17 +708,17 @@
   </Style>
 
   <Style TargetType="Slider">
-    <Setter Property="Foreground" Value="{StaticResource Amber}"/>
+    <Setter Property="Foreground" Value="{StaticResource Accent}"/>
     <Setter Property="IsMoveToPointEnabled" Value="True"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Slider">
           <Grid Height="16" Background="Transparent">
-            <Rectangle Height="1" Fill="{StaticResource Line3}" VerticalAlignment="Center"/>
+            <Border Height="3" CornerRadius="1.5" Background="{StaticResource Line2}" VerticalAlignment="Center"/>
             <Track x:Name="PART_Track">
               <Track.DecreaseRepeatButton>
                 <RepeatButton Command="Slider.DecreaseLarge" Focusable="False">
-                  <RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Grid Background="Transparent"><Rectangle Height="1" Fill="{StaticResource Amber}" VerticalAlignment="Center"/></Grid></ControlTemplate></RepeatButton.Template>
+                  <RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Grid Background="Transparent"><Border Height="3" CornerRadius="1.5" Background="{StaticResource Accent}" VerticalAlignment="Center"/></Grid></ControlTemplate></RepeatButton.Template>
                 </RepeatButton>
               </Track.DecreaseRepeatButton>
               <Track.IncreaseRepeatButton>
@@ -576,7 +728,7 @@
               </Track.IncreaseRepeatButton>
               <Track.Thumb>
                 <Thumb>
-                  <Thumb.Template><ControlTemplate TargetType="Thumb"><Rectangle x:Name="k" Width="6" Height="12" Fill="{StaticResource Text}"/><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="k" Property="Fill" Value="{StaticResource AmberHi}"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Thumb.Template>
+                  <Thumb.Template><ControlTemplate TargetType="Thumb"><Ellipse x:Name="k" Width="12" Height="12" Fill="{StaticResource Text}"/><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="k" Property="Fill" Value="{StaticResource AccentHi}"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Thumb.Template>
                 </Thumb>
               </Track.Thumb>
             </Track>
@@ -596,26 +748,23 @@
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
   </Style>
   <Style TargetType="ListBoxItem">
-    <Setter Property="Padding" Value="10,6"/>
+    <Setter Property="Padding" Value="8,3"/>
+    <Setter Property="Margin" Value="0,0,0,1"/>
     <Setter Property="Foreground" Value="{StaticResource Text}"/>
     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ListBoxItem">
-          <Grid Background="Transparent">
-            <Border x:Name="bd" Background="Transparent" Padding="{TemplateBinding Padding}">
-              <ContentPresenter/>
-            </Border>
-            <Rectangle x:Name="mark" Width="2" HorizontalAlignment="Left" Fill="{StaticResource Amber}" Visibility="Collapsed"/>
-          </Grid>
+          <Border x:Name="bd" Background="Transparent" CornerRadius="3" Padding="{TemplateBinding Padding}">
+            <ContentPresenter/>
+          </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg2}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Hover}"/>
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource AmberWash}"/>
-              <Setter TargetName="mark" Property="Visibility" Value="Visible"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentWash}"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -623,19 +772,22 @@
     </Setter>
   </Style>
 
-  <!-- Outliner tree. -->
+  <!-- Trees (Scene Hierarchy, asset folders). -->
   <Style x:Key="ExpanderToggle" TargetType="ToggleButton">
     <Setter Property="Focusable" Value="False"/>
     <Setter Property="Width" Value="16"/>
+    <Setter Property="Foreground" Value="{StaticResource Text4}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ToggleButton">
           <Border Background="Transparent">
-            <TextBlock x:Name="g" Text="&#xE76C;" Style="{StaticResource Glyph}" FontSize="8" Foreground="{StaticResource Text4}"/>
+            <Path x:Name="g" Data="{StaticResource I.ChevronRight}" Style="{StaticResource Icon}" RenderTransformOrigin="0.5,0.5">
+              <Path.RenderTransform><ScaleTransform ScaleX="0.7" ScaleY="0.7"/></Path.RenderTransform>
+            </Path>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="True"><Setter TargetName="g" Property="Text" Value="&#xE70D;"/></Trigger>
-            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="g" Property="Foreground" Value="{StaticResource Text}"/></Trigger>
+            <Trigger Property="IsChecked" Value="True"><Setter TargetName="g" Property="Data" Value="{StaticResource I.ChevronDown}"/></Trigger>
+            <Trigger Property="IsMouseOver" Value="True"><Setter Property="Foreground" Value="{StaticResource Text}"/></Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -657,23 +809,69 @@
       <Setter.Value>
         <ControlTemplate TargetType="TreeViewItem">
           <StackPanel>
-            <Grid x:Name="row" Background="Transparent" MinHeight="24">
-              <Grid.ColumnDefinitions><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <Rectangle x:Name="mark" Grid.ColumnSpan="2" Width="2" HorizontalAlignment="Left" Fill="{StaticResource Amber}" Visibility="Collapsed"/>
-              <ToggleButton x:Name="exp" Style="{StaticResource ExpanderToggle}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
-              <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" Margin="2,0,8,0"/>
-            </Grid>
-            <ItemsPresenter x:Name="kids" Margin="12,0,0,0"/>
+            <Border x:Name="row" Background="Transparent" MinHeight="22" CornerRadius="3" Margin="0,0,0,1">
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <ToggleButton x:Name="exp" Style="{StaticResource ExpanderToggle}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
+                <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" Margin="2,0,8,0"/>
+              </Grid>
+            </Border>
+            <ItemsPresenter x:Name="kids" Margin="14,0,0,0"/>
           </StackPanel>
           <ControlTemplate.Triggers>
             <Trigger Property="HasItems" Value="False"><Setter TargetName="exp" Property="Visibility" Value="Hidden"/></Trigger>
             <Trigger Property="IsExpanded" Value="False"><Setter TargetName="kids" Property="Visibility" Value="Collapsed"/></Trigger>
-            <Trigger SourceName="row" Property="IsMouseOver" Value="True"><Setter TargetName="row" Property="Background" Value="{StaticResource Bg2}"/></Trigger>
+            <Trigger SourceName="row" Property="IsMouseOver" Value="True"><Setter TargetName="row" Property="Background" Value="{StaticResource Hover}"/></Trigger>
             <Trigger Property="IsSelected" Value="True">
-              <Setter TargetName="row" Property="Background" Value="{StaticResource AmberWash}"/>
-              <Setter TargetName="mark" Property="Visibility" Value="Visible"/>
+              <Setter TargetName="row" Property="Background" Value="{StaticResource AccentWash}"/>
               <Setter Property="Foreground" Value="{StaticResource Text}"/>
             </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Collapsible inspector section. -->
+  <Style x:Key="SectionToggle" TargetType="ToggleButton">
+    <Setter Property="Foreground" Value="{StaticResource Text2}"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ToggleButton">
+          <Border x:Name="bd" Background="{StaticResource Bg2}" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,1" Height="26" Padding="6,0,10,0">
+            <DockPanel>
+              <Path x:Name="chev" Data="{StaticResource I.ChevronRight}" Style="{StaticResource Icon}" Stroke="{StaticResource Text4}" RenderTransformOrigin="0.5,0.5" Margin="0,0,4,0">
+                <Path.RenderTransform><ScaleTransform ScaleX="0.7" ScaleY="0.7"/></Path.RenderTransform>
+              </Path>
+              <ContentPresenter VerticalAlignment="Center" TextBlock.FontWeight="SemiBold" TextBlock.FontSize="11.5"/>
+            </DockPanel>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="True"><Setter TargetName="chev" Property="Data" Value="{StaticResource I.ChevronDown}"/></Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Bg3}"/>
+              <Setter Property="Foreground" Value="{StaticResource Text}"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style x:Key="Section" TargetType="Expander">
+    <Setter Property="Foreground" Value="{StaticResource Text}"/>
+    <Setter Property="Margin" Value="0,0,0,-1"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Expander">
+          <DockPanel>
+            <ToggleButton DockPanel.Dock="Top" Style="{StaticResource SectionToggle}" Content="{TemplateBinding Header}"
+                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <ContentPresenter x:Name="body" Margin="12,8,12,12"/>
+          </DockPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsExpanded" Value="False"><Setter TargetName="body" Property="Visibility" Value="Collapsed"/></Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -687,7 +885,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ContextMenu">
-          <Border Background="{StaticResource Bg2}" BorderBrush="{StaticResource Line3}" BorderThickness="1" Padding="0,5" MinWidth="250">
+          <Border Background="{StaticResource Bg2}" BorderBrush="{StaticResource Line2}" BorderThickness="1" CornerRadius="4" Padding="4" MinWidth="240">
             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
           </Border>
         </ControlTemplate>
@@ -700,20 +898,24 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="MenuItem">
-          <Border x:Name="bd" Background="Transparent" Padding="0,6">
+          <Border x:Name="bd" Background="Transparent" CornerRadius="3" Padding="0,4">
             <Grid>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="28"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
               </Grid.ColumnDefinitions>
-              <TextBlock x:Name="check" Text="&#xE73E;" Style="{StaticResource Glyph}" FontSize="10" Foreground="{StaticResource Amber}" Visibility="Hidden"/>
+              <ContentPresenter x:Name="icon" ContentSource="Icon" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              <Path x:Name="check" Data="M3,8 L6.5,11.5 L13,4.5" Style="{StaticResource Icon}" Stroke="{StaticResource AccentHi}" StrokeThickness="1.6" Visibility="Hidden"/>
               <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center"/>
-              <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}" FontFamily="{StaticResource Display}" FontSize="11" Foreground="{StaticResource Text4}" Margin="24,0,14,0" VerticalAlignment="Center"/>
+              <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}" FontSize="11" Foreground="{StaticResource Text4}" Margin="24,0,10,0" VerticalAlignment="Center"/>
             </Grid>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="True"><Setter TargetName="check" Property="Visibility" Value="Visible"/></Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="check" Property="Visibility" Value="Visible"/>
+              <Setter TargetName="icon" Property="Visibility" Value="Hidden"/>
+            </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource Hover}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentWash}"/>
               <Setter Property="Foreground" Value="{StaticResource Text}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.35"/></Trigger>
@@ -726,7 +928,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Separator">
-          <Rectangle Height="1" Fill="{StaticResource Line2}" Margin="0,5"/>
+          <Rectangle Height="1" Fill="{StaticResource Line}" Margin="0,4"/>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -736,7 +938,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Separator">
-          <Rectangle Height="1" Fill="{StaticResource Line2}" Margin="0,5"/>
+          <Rectangle Height="1" Fill="{StaticResource Line}" Margin="6,4"/>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -749,7 +951,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="MenuItem">
-          <TextBlock Text="{TemplateBinding Header}" Style="{StaticResource Micro}" Margin="28,6,14,3"/>
+          <TextBlock Text="{TemplateBinding Header}" Style="{StaticResource Micro}" FontWeight="SemiBold" Margin="28,6,14,3"/>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -761,7 +963,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ToolTip">
-          <Border Background="{StaticResource Bg3}" BorderBrush="{StaticResource Line3}" BorderThickness="1" Padding="8,5" MaxWidth="360">
+          <Border Background="{StaticResource Bg3}" BorderBrush="{StaticResource Line2}" BorderThickness="1" CornerRadius="3" Padding="8,5" MaxWidth="360">
             <ContentPresenter TextBlock.FontSize="11.5"/>
           </Border>
         </ControlTemplate>
@@ -770,7 +972,7 @@
   </Style>
 
   <Style TargetType="GridSplitter">
-    <Setter Property="Background" Value="{StaticResource Line}"/>
+    <Setter Property="Background" Value="{StaticResource Bg0}"/>
     <Setter Property="Focusable" Value="False"/>
     <Setter Property="Template">
       <Setter.Value>
@@ -779,8 +981,8 @@
             <Rectangle x:Name="r" Fill="{TemplateBinding Background}"/>
           </Grid>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="r" Property="Fill" Value="{StaticResource AmberLo}"/></Trigger>
-            <Trigger Property="IsDragging" Value="True"><Setter TargetName="r" Property="Fill" Value="{StaticResource Amber}"/></Trigger>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="r" Property="Fill" Value="{StaticResource AccentLo}"/></Trigger>
+            <Trigger Property="IsDragging" Value="True"><Setter TargetName="r" Property="Fill" Value="{StaticResource Accent}"/></Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -791,6 +993,7 @@
   <Style x:Key="KeyCap" TargetType="Border">
     <Setter Property="BorderBrush" Value="{StaticResource Line3}"/>
     <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="3"/>
     <Setter Property="Padding" Value="5,1"/>
     <Setter Property="Margin" Value="0,0,4,0"/>
     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -798,8 +1001,36 @@
 
   <!-- Floating overlay surface inside the viewport. -->
   <Style x:Key="Overlay" TargetType="Border">
-    <Setter Property="Background" Value="#D9111311"/>
-    <Setter Property="BorderBrush" Value="{StaticResource Line2}"/>
+    <Setter Property="Background" Value="#E6191C23"/>
+    <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
     <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="4"/>
+  </Style>
+
+  <!-- Docked panel header strip (title + count + actions). -->
+  <Style x:Key="PanelHeader" TargetType="Border">
+    <Setter Property="Background" Value="{StaticResource Bg1}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="Height" Value="30"/>
+    <Setter Property="Padding" Value="10,0,6,0"/>
+  </Style>
+
+  <!-- Thin vertical divider inside toolbars. -->
+  <Style x:Key="ToolDivider" TargetType="Rectangle">
+    <Setter Property="Width" Value="1"/>
+    <Setter Property="Fill" Value="{StaticResource Line}"/>
+    <Setter Property="Margin" Value="5,5"/>
+  </Style>
+
+  <!-- Key badge in the corner of a tool button. -->
+  <Style x:Key="KeyBadge" TargetType="TextBlock">
+    <Setter Property="FontSize" Value="8.5"/>
+    <Setter Property="FontFamily" Value="{StaticResource Display}"/>
+    <Setter Property="Foreground" Value="{StaticResource Text4}"/>
+    <Setter Property="HorizontalAlignment" Value="Right"/>
+    <Setter Property="VerticalAlignment" Value="Bottom"/>
+    <Setter Property="Margin" Value="0,0,2,0"/>
+    <Setter Property="IsHitTestVisible" Value="False"/>
   </Style>
 </ResourceDictionary>

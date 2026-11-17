@@ -52,6 +52,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        VersionText.Text = AppVersion;
         LoadSettings();
         RegisterActions();
         SetupViewport();
@@ -142,7 +143,7 @@ public partial class MainWindow : Window
     private void UpdateLoadIndicator()
     {
         if (LoadDot is null) return;
-        LoadDot.Fill = (Brush)FindResource(_pendingLoads > 0 ? "Amber" : "Olive");
+        LoadDot.Fill = (Brush)FindResource(_pendingLoads > 0 ? "Warning" : "Success");
         LoadDot.ToolTip = _pendingLoads > 0 ? $"{_pendingLoads} load(s) in progress" : "Idle";
     }
 

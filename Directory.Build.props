@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <Version>0.9.0</Version>
+    <Version>0.10.0</Version>
     <Company>Yooos</Company>
     <Copyright>Copyright (c) 2026 Yooos</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

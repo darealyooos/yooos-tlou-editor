@@ -12,12 +12,12 @@
     <!-- Thumbnail or category placeholder, shared by list rows and grid tiles. -->
     <DataTemplate x:Key="ThumbTemplate" DataType="{x:Type local:BrowserItem}">
       <Grid>
-        <Border Background="{StaticResource Bg3}" BorderBrush="{StaticResource Line}" BorderThickness="1">
-          <TextBlock Text="{Binding Initial}" FontFamily="{StaticResource Display}" FontWeight="Light" FontSize="13" Foreground="{StaticResource Text4}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Border Background="{StaticResource Bg3}" CornerRadius="2">
+          <TextBlock Text="{Binding Initial}" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource Text4}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
         <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
-        <Border Background="{StaticResource Bg2}" Visibility="{Binding NoMesh, Converter={StaticResource BoolVis}}" ToolTip="This pak has no mesh (skeleton, animation, collision or data only)">
-          <TextBlock Text="no mesh" FontFamily="{StaticResource Display}" FontSize="9.5" Foreground="{StaticResource Text4}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Border Background="{StaticResource Bg2}" CornerRadius="2" Visibility="{Binding NoMesh, Converter={StaticResource BoolVis}}" ToolTip="This pak has no mesh (skeleton, animation, collision or data only)">
+          <TextBlock Text="no mesh" FontSize="9.5" Foreground="{StaticResource Text4}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
       </Grid>
     </DataTemplate>
@@ -25,38 +25,41 @@
     <!-- List row. -->
     <DataTemplate x:Key="RowTemplate" DataType="{x:Type local:BrowserItem}">
       <Grid DataContextChanged="OnBrowserItemShown" Loaded="OnBrowserItemLoaded" Height="{DynamicResource RowHeight}">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ThumbTemplate}" Width="{DynamicResource RowHeight}" Height="{DynamicResource RowHeight}"/>
-        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,6,0">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ThumbTemplate}" Width="{DynamicResource RowHeight}" Height="{DynamicResource RowHeight}" Margin="0,2"/>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="9,0,6,0">
           <TextBlock Text="{Binding Name}" FontSize="12" TextTrimming="CharacterEllipsis"/>
-          <TextBlock Text="{Binding Detail}" FontSize="10.5" Foreground="{StaticResource Text3}" TextTrimming="CharacterEllipsis" Margin="0,1,0,0"/>
+          <TextBlock Text="{Binding Detail}" FontSize="10.5" Foreground="{StaticResource Text4}" TextTrimming="CharacterEllipsis" Margin="0,1,0,0"/>
         </StackPanel>
-        <TextBlock Grid.Column="2" Text="&#xE735;" Style="{StaticResource Glyph}" FontSize="10" Foreground="{StaticResource Amber}"
-                   Visibility="{Binding IsFavorite, Converter={StaticResource BoolVis}}"/>
+        <Path Grid.Column="2" Data="{StaticResource I.Star}" Style="{StaticResource Icon}" Stroke="{StaticResource Star}" Fill="{StaticResource Star}" Margin="0,0,2,0"
+              Visibility="{Binding IsFavorite, Converter={StaticResource BoolVis}}">
+          <Path.LayoutTransform><ScaleTransform ScaleX="0.7" ScaleY="0.7"/></Path.LayoutTransform>
+        </Path>
       </Grid>
     </DataTemplate>
 
     <!-- Grid tile (rows of tiles keep the list virtualised). -->
     <DataTemplate x:Key="TileTemplate" DataType="{x:Type local:BrowserItem}">
-      <Border x:Name="tile" Margin="0,0,6,6" Background="Transparent" BorderBrush="{StaticResource Line}" BorderThickness="1" Cursor="Hand"
+      <Border x:Name="tile" Margin="0,0,6,6" Padding="3" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="4" Cursor="Hand"
               DataContextChanged="OnBrowserItemShown" Loaded="OnBrowserItemLoaded" MouseLeftButtonDown="OnTileMouseDown" MouseMove="OnTileMouseMove" ToolTip="{Binding Label}">
         <Grid>
           <Grid.RowDefinitions><RowDefinition Height="{DynamicResource TileImageHeight}"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
           <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource ThumbTemplate}"/>
-          <TextBlock Text="&#xE735;" Style="{StaticResource Glyph}" FontSize="10" Foreground="{StaticResource Amber}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0"
-                     Visibility="{Binding IsFavorite, Converter={StaticResource BoolVis}}"/>
-          <TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="11" Margin="6,5,6,6" TextTrimming="CharacterEllipsis" Foreground="{StaticResource Text2}"/>
-          <Rectangle x:Name="mark" Grid.RowSpan="2" Height="2" VerticalAlignment="Bottom" Fill="{StaticResource Amber}" Visibility="Collapsed"/>
+          <Path Data="{StaticResource I.Star}" Style="{StaticResource Icon}" Stroke="{StaticResource Star}" Fill="{StaticResource Star}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,3,3,0"
+                Visibility="{Binding IsFavorite, Converter={StaticResource BoolVis}}">
+            <Path.LayoutTransform><ScaleTransform ScaleX="0.7" ScaleY="0.7"/></Path.LayoutTransform>
+          </Path>
+          <TextBlock x:Name="label" Grid.Row="1" Text="{Binding Name}" FontSize="11" Margin="2,5,2,2" TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{StaticResource Text2}"/>
         </Grid>
       </Border>
       <DataTemplate.Triggers>
         <Trigger SourceName="tile" Property="IsMouseOver" Value="True">
-          <Setter TargetName="tile" Property="BorderBrush" Value="{StaticResource Line3}"/>
+          <Setter TargetName="tile" Property="Background" Value="{StaticResource Hover}"/>
         </Trigger>
         <DataTrigger Binding="{Binding IsSelected}" Value="True">
-          <Setter TargetName="tile" Property="BorderBrush" Value="{StaticResource Amber}"/>
-          <Setter TargetName="tile" Property="Background" Value="{StaticResource AmberWash}"/>
-          <Setter TargetName="mark" Property="Visibility" Value="Visible"/>
+          <Setter TargetName="tile" Property="BorderBrush" Value="{StaticResource Accent}"/>
+          <Setter TargetName="tile" Property="Background" Value="{StaticResource AccentWash}"/>
+          <Setter TargetName="label" Property="Foreground" Value="{StaticResource Text}"/>
         </DataTrigger>
       </DataTemplate.Triggers>
     </DataTemplate>
@@ -68,46 +71,72 @@
 
   <DockPanel x:Name="RootDock" LastChildFill="True">
 
-    <!-- ================================================================ navigation -->
+    <!-- ================================================================ menu bar -->
     <Border DockPanel.Dock="Top" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1">
-      <Grid Height="40">
+      <Grid Height="34">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <!-- Brand -->
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,18,0">
-          <Grid Width="18" Height="18" Margin="0,0,10,0">
-            <Rectangle Stroke="{StaticResource Amber}" StrokeThickness="1"/>
-            <Rectangle Fill="{StaticResource Amber}" Width="6" Height="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,3,3"/>
-          </Grid>
-          <TextBlock Text="YOOOS" FontFamily="{StaticResource Display}" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center"/>
-          <TextBlock Text="TLOU EDITOR" FontFamily="{StaticResource Display}" FontWeight="Light" FontSize="13" Foreground="{StaticResource Text2}" Margin="6,0,0,0" VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,10,0">
+          <Border Width="20" Height="20" CornerRadius="4" Background="{StaticResource Accent}" Margin="0,0,9,0">
+            <Path Data="M5,5 L10,10.5 L15,5 M10,10.5 L10,15.5" Stroke="{StaticResource OnAccent}" StrokeThickness="1.9" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Width="20" Height="20"/>
+          </Border>
+          <TextBlock Text="Yooos TLOU Editor" FontWeight="SemiBold" FontSize="12.5" VerticalAlignment="Center"/>
+          <TextBlock x:Name="VersionText" Text="v0.9" FontSize="11" Foreground="{StaticResource Text4}" Margin="7,1,0,0" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <!-- Menus and workspaces -->
-        <StackPanel Grid.Column="1" Orientation="Horizontal">
-          <Rectangle Width="1" Fill="{StaticResource Line}" Margin="0,11"/>
-          <Button x:Name="SceneMenuButton" Style="{StaticResource NavMenu}" Content="Scene" Click="OnOpenNavMenu" Margin="4,0,0,0">
+        <!-- Menus -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <Rectangle Style="{StaticResource ToolDivider}" Height="16" Margin="4,0,6,0"/>
+          <Button x:Name="SceneMenuButton" Style="{StaticResource NavMenu}" Content="File" Click="OnOpenNavMenu">
             <Button.ContextMenu>
               <ContextMenu>
-                <MenuItem x:Name="MenuNew" Header="New scene" Click="OnNewScene"/>
-                <MenuItem x:Name="MenuOpen" Header="Open scene…" Click="OnOpenScene"/>
+                <MenuItem x:Name="MenuNew" Header="New scene" Click="OnNewScene">
+                  <MenuItem.Icon><Path Data="{StaticResource I.File}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="MenuOpen" Header="Open scene…" Click="OnOpenScene">
+                  <MenuItem.Icon><Path Data="{StaticResource I.FolderOpen}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
                 <MenuItem x:Name="MenuOpenRecovery" Header="Open autosave folder" Click="OnOpenAutosaveFolder"/>
                 <Separator/>
-                <MenuItem x:Name="MenuSave" Header="Save scene" Click="OnSaveScene"/>
+                <MenuItem x:Name="MenuSave" Header="Save scene" Click="OnSaveScene">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Save}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
                 <MenuItem x:Name="MenuSaveAs" Header="Save scene as…" Click="OnSaveSceneAs"/>
                 <Separator/>
-                <MenuItem Header="Save viewport image…" Click="OnSaveImage"/>
+                <MenuItem Header="Save viewport image…" Click="OnSaveImage">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Camera}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="Exit" InputGestureText="Alt+F4" Click="OnExit"/>
               </ContextMenu>
             </Button.ContextMenu>
           </Button>
-          <Rectangle Width="1" Fill="{StaticResource Line}" Margin="4,11"/>
-          <RadioButton x:Name="NavCatalogue" Style="{StaticResource NavTab}" GroupName="Workspace" Content="Asset Catalogue" Checked="OnWorkspaceTab"/>
-          <RadioButton x:Name="NavWorld" Style="{StaticResource NavTab}" GroupName="Workspace" Content="World Editor" IsChecked="True" Checked="OnWorkspaceTab"/>
-          <Button x:Name="ViewportMenuButton" Style="{StaticResource NavMenu}" Content="Viewport" Click="OnOpenNavMenu">
+          <Button x:Name="EditMenuButton" Style="{StaticResource NavMenu}" Content="Edit" Click="OnOpenNavMenu">
+            <Button.ContextMenu>
+              <ContextMenu Opened="OnToolsMenuOpened">
+                <MenuItem x:Name="MenuUndo" Header="Undo" Click="OnUndo" IsEnabled="False">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Undo}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="MenuRedo" Header="Redo" Click="OnRedo" IsEnabled="False">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Redo}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem x:Name="MenuDuplicate" Header="Duplicate" Click="OnDuplicate">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Copy}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="MenuDeleteItem" Header="Delete" Click="OnDelete">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Trash}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Deselect" InputGestureText="Esc" Click="OnDeselect"/>
+                <Separator/>
+                <MenuItem Header="Preferences…" Click="OnOpenPreferences"/>
+              </ContextMenu>
+            </Button.ContextMenu>
+          </Button>
+          <Button x:Name="ViewportMenuButton" Style="{StaticResource NavMenu}" Content="View" Click="OnOpenNavMenu">
             <Button.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="LAYERS" Style="{StaticResource MenuHeading}"/>
@@ -115,28 +144,37 @@
                 <MenuItem x:Name="ShowVegetation" Header="Map vegetation" IsCheckable="True" IsChecked="True" Click="OnToggleLayers"/>
                 <MenuItem x:Name="ShowGrid" Header="Ground grid" IsCheckable="True" IsChecked="True" Click="OnToggleLayers"/>
                 <Separator/>
+                <MenuItem Header="PROJECTION" Style="{StaticResource MenuHeading}"/>
+                <MenuItem x:Name="MenuPerspective" Header="Perspective" IsChecked="True" Click="OnMenuProjection"/>
+                <MenuItem x:Name="MenuOrthographic" Header="Orthographic" Click="OnMenuProjection"/>
+                <Separator/>
                 <MenuItem Header="CAMERA" Style="{StaticResource MenuHeading}"/>
                 <MenuItem x:Name="MenuFocus" Header="Focus selection" Click="OnFocus"/>
-                <MenuItem x:Name="MenuFrameAll" Header="Frame everything" Click="OnFrameAll"/>
+                <MenuItem x:Name="MenuFrameAll" Header="Frame everything" Click="OnFrameAll">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Frame}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
                 <MenuItem x:Name="MenuResetCamera" Header="Reset camera" Click="OnResetCamera"/>
+                <MenuItem Header="View from top" Tag="top" Click="OnViewPreset"/>
+                <MenuItem Header="View from front" Tag="front" Click="OnViewPreset"/>
+                <MenuItem Header="View from right" Tag="right" Click="OnViewPreset"/>
                 <Separator/>
                 <MenuItem Header="PANELS" Style="{StaticResource MenuHeading}"/>
-                <MenuItem x:Name="MenuToggleBrowser" Header="Asset Browser" IsCheckable="True" IsChecked="True" Click="OnPanelMenu"/>
                 <MenuItem x:Name="MenuToggleHierarchy" Header="Scene Hierarchy" IsCheckable="True" IsChecked="True" Click="OnPanelMenu"/>
+                <MenuItem x:Name="MenuToggleBrowser" Header="Asset Browser" IsCheckable="True" IsChecked="True" Click="OnPanelMenu"/>
                 <MenuItem x:Name="MenuToggleInspector" Header="Inspector" IsCheckable="True" IsChecked="True" Click="OnPanelMenu"/>
+                <MenuItem x:Name="MenuToggleWorkspace" Header="Asset Workspace" IsCheckable="True" IsChecked="True" Click="OnWorkspacePanelMenu"/>
                 <MenuItem x:Name="MaximiseItem" Header="Maximise viewport" IsCheckable="True" Click="OnToggleMaximise"/>
+                <MenuItem Header="Reset layout" Click="OnResetLayout"/>
                 <Separator/>
-                <MenuItem Header="Save viewport image…" Click="OnSaveImage"/>
+                <MenuItem Header="Save viewport image…" Click="OnSaveImage">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Camera}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
               </ContextMenu>
             </Button.ContextMenu>
           </Button>
           <Button x:Name="ToolsMenuButton" Style="{StaticResource NavMenu}" Content="Tools" Click="OnOpenNavMenu">
             <Button.ContextMenu>
               <ContextMenu x:Name="ToolsMenu" Opened="OnToolsMenuOpened">
-                <MenuItem Header="EDIT" Style="{StaticResource MenuHeading}"/>
-                <MenuItem x:Name="MenuUndo" Header="Undo" Click="OnUndo" IsEnabled="False"/>
-                <MenuItem x:Name="MenuRedo" Header="Redo" Click="OnRedo" IsEnabled="False"/>
-                <Separator/>
                 <MenuItem Header="TRANSFORM" Style="{StaticResource MenuHeading}"/>
                 <MenuItem x:Name="MenuSelect" Header="Select" Click="OnToolSelect"/>
                 <MenuItem x:Name="MenuMove" Header="Move" Click="OnToolMove"/>
@@ -149,51 +187,69 @@
                 <MenuItem x:Name="MenuBoundary" Header="Draw boundary" Click="OnMenuBoundary"/>
                 <MenuItem Header="Clear boundary" Click="OnClearBoundary"/>
                 <Separator/>
-                <MenuItem Header="SELECTION" Style="{StaticResource MenuHeading}"/>
-                <MenuItem x:Name="MenuDuplicate" Header="Duplicate" Click="OnDuplicate"/>
-                <MenuItem x:Name="MenuDeleteItem" Header="Delete" Click="OnDelete"/>
-                <MenuItem Header="Deselect" InputGestureText="Esc" Click="OnDeselect"/>
-                <Separator/>
-                <MenuItem x:Name="MenuShortcuts" Header="Keyboard shortcut sheet" Click="OnToggleShortcuts"/>
-                <MenuItem Header="Customise shortcuts…" Click="OnCustomiseShortcuts"/>
+                <MenuItem Header="MEMORY" Style="{StaticResource MenuHeading}"/>
+                <MenuItem Header="Release unused paks" Click="OnReleaseMemory"/>
               </ContextMenu>
             </Button.ContextMenu>
           </Button>
-          <RadioButton x:Name="NavSettings" Style="{StaticResource NavTab}" GroupName="Workspace" Content="Settings" Checked="OnWorkspaceTab"/>
+          <Button x:Name="HelpMenuButton" Style="{StaticResource NavMenu}" Content="Help" Click="OnOpenNavMenu">
+            <Button.ContextMenu>
+              <ContextMenu>
+                <MenuItem x:Name="MenuShortcuts" Header="Keyboard shortcut sheet" Click="OnToggleShortcuts">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Keyboard}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Customise shortcuts…" Click="OnCustomiseShortcuts"/>
+                <Separator/>
+                <MenuItem Header="About Yooos TLOU Editor" Click="OnAbout">
+                  <MenuItem.Icon><Path Data="{StaticResource I.Help}" Style="{StaticResource Icon}"/></MenuItem.Icon>
+                </MenuItem>
+              </ContextMenu>
+            </Button.ContextMenu>
+          </Button>
         </StackPanel>
 
         <!-- Current scene -->
-        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
-          <Ellipse x:Name="DirtyDot" Width="6" Height="6" Fill="{StaticResource Amber}" Margin="0,0,8,0" Visibility="Collapsed" ToolTip="Unsaved changes"/>
-          <TextBlock x:Name="SceneNameText" FontFamily="{StaticResource Display}" FontSize="12" Foreground="{StaticResource Text2}" VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
+          <Path Data="{StaticResource I.Layers}" Style="{StaticResource Icon}" Stroke="{StaticResource Text4}" Margin="0,0,7,0"/>
+          <TextBlock x:Name="SceneNameText" FontSize="12" Foreground="{StaticResource Text2}" VerticalAlignment="Center" MaxWidth="260" TextTrimming="CharacterEllipsis"/>
+          <Ellipse x:Name="DirtyDot" Width="6" Height="6" Fill="{StaticResource Warning}" Margin="8,0,0,0" Visibility="Collapsed" ToolTip="Unsaved changes"/>
         </StackPanel>
+
+        <!-- Workspaces -->
+        <Border Grid.Column="4" Style="{StaticResource SegmentBox}" Margin="0,0,10,0" VerticalAlignment="Center" Padding="1">
+          <StackPanel Orientation="Horizontal">
+            <RadioButton x:Name="NavCatalogue" Style="{StaticResource NavTab}" GroupName="Workspace" Content="Asset Catalogue" Checked="OnWorkspaceTab"/>
+            <RadioButton x:Name="NavWorld" Style="{StaticResource NavTab}" GroupName="Workspace" Content="World Editor" IsChecked="True" Checked="OnWorkspaceTab"/>
+            <RadioButton x:Name="NavSettings" Style="{StaticResource NavTab}" GroupName="Workspace" Content="Settings" Checked="OnWorkspaceTab"/>
+          </StackPanel>
+        </Border>
       </Grid>
     </Border>
 
     <!-- ================================================================ status bar -->
-    <Border DockPanel.Dock="Bottom" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Height="26">
-      <Grid Margin="14,0">
+    <Border DockPanel.Dock="Bottom" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Height="24">
+      <Grid Margin="10,0">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-          <TextBlock Text="SCENE" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
+          <TextBlock Text="Scene" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
           <TextBlock x:Name="StatusProject" FontSize="11" Foreground="{StaticResource Text2}" MaxWidth="220" TextTrimming="CharacterEllipsis"/>
         </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-          <TextBlock Text="SELECTED" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0,0,0">
+          <TextBlock Text="Selected" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
           <TextBlock x:Name="StatusSelection" Text="—" FontSize="11" Foreground="{StaticResource Text2}" MaxWidth="240" TextTrimming="CharacterEllipsis"/>
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,12,0">
-          <Ellipse x:Name="LoadDot" Width="6" Height="6" Fill="{StaticResource Olive}" Margin="0,0,8,0"/>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="18,0,12,0">
+          <Ellipse x:Name="LoadDot" Width="7" Height="7" Fill="{StaticResource Success}" Margin="0,0,7,0"/>
           <TextBlock x:Name="StatusText" Text="Initialising" FontSize="11" Foreground="{StaticResource Text3}" TextTrimming="CharacterEllipsis"/>
         </StackPanel>
-        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
-          <TextBlock Text="MAP" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
+        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,18,0">
+          <TextBlock Text="Map" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
           <TextBlock x:Name="StatusTris" Text="—" FontFamily="{StaticResource Mono}" FontSize="10.5" Foreground="{StaticResource Text2}"/>
         </StackPanel>
-        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
-          <TextBlock Text="CAMERA" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
+        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,18,0">
+          <TextBlock Text="Camera" Style="{StaticResource Micro}" Margin="0,0,6,0"/>
           <TextBlock x:Name="StatusCamera" Text="—" FontFamily="{StaticResource Mono}" FontSize="10.5" Foreground="{StaticResource Text2}"/>
         </StackPanel>
         <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
@@ -204,279 +260,447 @@
     </Border>
 
     <!-- ================================================================ workspace -->
-    <Grid x:Name="WorkspaceGrid">
+    <Grid x:Name="WorkspaceGrid" Margin="3,3,3,3">
       <Grid.ColumnDefinitions>
         <ColumnDefinition x:Name="LeftColumn" Width="300" MinWidth="250"/>
-        <ColumnDefinition x:Name="LeftSplitColumn" Width="1"/>
+        <ColumnDefinition x:Name="LeftSplitColumn" Width="3"/>
         <ColumnDefinition Width="*" MinWidth="400"/>
-        <ColumnDefinition x:Name="RightSplitColumn" Width="1"/>
+        <ColumnDefinition x:Name="RightSplitColumn" Width="3"/>
         <ColumnDefinition x:Name="RightColumn" Width="320" MinWidth="260"/>
       </Grid.ColumnDefinitions>
 
-      <!-- ============================================== asset browser -->
-      <Border x:Name="BrowserPanel" Grid.Column="0" Background="{StaticResource Bg1}">
-        <DockPanel>
-          <StackPanel DockPanel.Dock="Top" Margin="14,14,14,0">
-            <Grid>
-              <TextBlock Text="ASSET BROWSER" Style="{StaticResource MicroAccent}"/>
-              <TextBlock x:Name="BrowserCount" HorizontalAlignment="Right" FontFamily="{StaticResource Mono}" FontSize="10.5" Foreground="{StaticResource Text3}"/>
-            </Grid>
+      <!-- ============================================== left: hierarchy over asset browser -->
+      <Grid x:Name="LeftPanel" Grid.Column="0">
+        <Grid.RowDefinitions>
+          <RowDefinition x:Name="OutlinerRow" Height="2*" MinHeight="120"/>
+          <RowDefinition x:Name="LeftSplitRow" Height="3"/>
+          <RowDefinition x:Name="BrowserRow" Height="3*" MinHeight="220"/>
+        </Grid.RowDefinitions>
 
-            <!-- Search -->
-            <Grid Margin="0,10,0,0">
-              <TextBox x:Name="SearchBox" Padding="26,6,24,6" TextChanged="OnFilterChanged" ToolTip="Filter by name; separate words narrow the results  (Ctrl+F)"/>
-              <TextBlock Text="&#xE721;" Style="{StaticResource Glyph}" HorizontalAlignment="Left" Margin="9,0,0,0" Foreground="{StaticResource Text3}" IsHitTestVisible="False"/>
-              <TextBlock x:Name="SearchHint" Text="Search assets" Margin="27,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Text4}" IsHitTestVisible="False"/>
-              <Button x:Name="SearchClear" Style="{StaticResource Ghost}" HorizontalAlignment="Right" Padding="7,4" Margin="0,0,1,0" Click="OnClearSearch" Visibility="Collapsed" ToolTip="Clear search">
-                <TextBlock Text="&#xE711;" Style="{StaticResource Glyph}" FontSize="9"/>
-              </Button>
+        <!-- Scene Hierarchy -->
+        <Border x:Name="OutlinerPanel" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4">
+          <DockPanel>
+            <Border DockPanel.Dock="Top" Style="{StaticResource PanelHeader}" CornerRadius="4,4,0,0">
+              <DockPanel>
+                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Click="OnOpenNavMenu" ToolTip="Add spawn or boundary">
+                  <Path Data="{StaticResource I.Plus}" Style="{StaticResource Icon}"/>
+                  <Button.ContextMenu>
+                    <ContextMenu>
+                      <MenuItem Header="WLF spawn" Click="OnAddSpawnWlf"/>
+                      <MenuItem Header="Seraphite spawn" Click="OnAddSpawnScars"/>
+                      <MenuItem Header="Draw arena boundary" Click="OnMenuBoundary"/>
+                    </ContextMenu>
+                  </Button.ContextMenu>
+                </Button>
+                <TextBlock DockPanel.Dock="Right" x:Name="OutlinerCount" Style="{StaticResource Count}" Margin="0,0,6,0"/>
+                <Path Data="{StaticResource I.Layers}" Style="{StaticResource Icon}" Stroke="{StaticResource Text3}" Margin="0,0,7,0"/>
+                <TextBlock Text="Scene Hierarchy" Style="{StaticResource PanelTitle}"/>
+              </DockPanel>
+            </Border>
+            <Grid DockPanel.Dock="Top" Margin="6,6,6,4">
+              <TextBox x:Name="HierarchySearch" Padding="24,3,22,3" TextChanged="OnHierarchyFilterChanged" ToolTip="Filter the hierarchy by name"/>
+              <Path Data="{StaticResource I.Search}" Style="{StaticResource Icon}" Stroke="{StaticResource Text4}" HorizontalAlignment="Left" Margin="6,0,0,0" IsHitTestVisible="False" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform><ScaleTransform ScaleX="0.8" ScaleY="0.8"/></Path.RenderTransform>
+              </Path>
+              <TextBlock x:Name="HierarchySearchHint" Text="Search scene" Margin="25,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Text4}" IsHitTestVisible="False"/>
             </Grid>
+            <TreeView x:Name="Hierarchy" Margin="4,0,4,4" SelectedItemChanged="OnHierarchySelected" MouseDoubleClick="OnHierarchyDoubleClick"/>
+          </DockPanel>
+        </Border>
 
-            <!-- Source -->
-            <Border BorderBrush="{StaticResource Line2}" BorderThickness="1" Margin="0,10,0,0">
-              <UniformGrid Columns="3">
-                <RadioButton x:Name="KindActors" Style="{StaticResource Segment}" GroupName="Source" Content="Actors" IsChecked="True" Checked="OnSourceChanged" ToolTip="Placeable actor paks (props, characters, weapons…)"/>
-                <RadioButton x:Name="KindMapProtos" Style="{StaticResource Segment}" GroupName="Source" Content="Map pieces" Checked="OnSourceChanged" ToolTip="Prototypes of the open map(s): native buildings, walls, props"/>
-                <RadioButton x:Name="KindLevels" Style="{StaticResource Segment}" GroupName="Source" Content="Levels" Checked="OnSourceChanged" ToolTip="Level paks you can open as the scene's background"/>
-              </UniformGrid>
+        <GridSplitter x:Name="LeftPanelSplitter" Grid.Row="1" Height="3" Background="Transparent" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted" Panel.ZIndex="5"/>
+
+        <!-- Asset Browser -->
+        <Border x:Name="BrowserPanel" Grid.Row="2" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4">
+          <DockPanel>
+            <Border DockPanel.Dock="Top" Style="{StaticResource PanelHeader}" CornerRadius="4,4,0,0">
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Right" x:Name="BrowserCount" Style="{StaticResource Count}" Margin="0,0,4,0"/>
+                <Path Data="{StaticResource I.Archive}" Style="{StaticResource Icon}" Stroke="{StaticResource Text3}" Margin="0,0,7,0"/>
+                <TextBlock Text="Asset Browser" Style="{StaticResource PanelTitle}"/>
+              </DockPanel>
             </Border>
 
-            <!-- Categories (built from the indexed content) -->
-            <WrapPanel x:Name="CategoryPanel" Margin="0,10,0,0" ToolTip="Categories are inferred from asset names"/>
+            <StackPanel DockPanel.Dock="Top" Margin="6,6,6,0">
+              <!-- Search -->
+              <Grid>
+                <TextBox x:Name="SearchBox" Padding="24,3,24,3" TextChanged="OnFilterChanged" ToolTip="Filter by name; separate words narrow the results  (Ctrl+F)"/>
+                <Path Data="{StaticResource I.Search}" Style="{StaticResource Icon}" Stroke="{StaticResource Text4}" HorizontalAlignment="Left" Margin="6,0,0,0" IsHitTestVisible="False" RenderTransformOrigin="0.5,0.5">
+                  <Path.RenderTransform><ScaleTransform ScaleX="0.8" ScaleY="0.8"/></Path.RenderTransform>
+                </Path>
+                <TextBlock x:Name="SearchHint" Text="Search assets" Margin="25,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Text4}" IsHitTestVisible="False"/>
+                <Button x:Name="SearchClear" Style="{StaticResource IconButton}" Height="20" Width="22" HorizontalAlignment="Right" Margin="0,0,1,0" Click="OnClearSearch" Visibility="Collapsed" ToolTip="Clear search">
+                  <Path Data="{StaticResource I.Close}" Style="{StaticResource Icon}" RenderTransformOrigin="0.5,0.5"><Path.RenderTransform><ScaleTransform ScaleX="0.7" ScaleY="0.7"/></Path.RenderTransform></Path>
+                </Button>
+              </Grid>
 
-            <!-- Filters, sorting, view -->
-            <Grid Margin="0,4,0,8">
-              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-              <ToggleButton x:Name="FavOnly" Style="{StaticResource IconToggle}" Click="OnFilterChanged" ToolTip="Show favourites only">
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock x:Name="FavOnlyGlyph" Text="&#xE734;" Style="{StaticResource Glyph}" FontSize="11"/>
-                  <TextBlock Text="Favourites" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center"/>
-                </StackPanel>
-              </ToggleButton>
-              <ComboBox x:Name="SortBox" Grid.Column="1" Margin="8,0" SelectionChanged="OnFilterChanged" ToolTip="Sort order">
-                <ComboBoxItem Content="Name A–Z" IsSelected="True"/>
-                <ComboBoxItem Content="Name Z–A"/>
-                <ComboBoxItem Content="Largest first"/>
-                <ComboBoxItem Content="Smallest first"/>
-                <ComboBoxItem Content="Archive"/>
-              </ComboBox>
-              <Border Grid.Column="2" BorderBrush="{StaticResource Line2}" BorderThickness="1">
-                <StackPanel Orientation="Horizontal">
-                  <RadioButton x:Name="ViewList" Style="{StaticResource Segment}" GroupName="BrowserView" Width="28" Padding="0,5" IsChecked="True" Checked="OnBrowserViewChanged" ToolTip="List view">
-                    <TextBlock Text="&#xE8FD;" Style="{StaticResource Glyph}" FontSize="11"/>
-                  </RadioButton>
-                  <RadioButton x:Name="ViewGrid" Style="{StaticResource Segment}" GroupName="BrowserView" Width="28" Padding="0,5" Checked="OnBrowserViewChanged" ToolTip="Grid view">
-                    <TextBlock Text="&#xF0E2;" Style="{StaticResource Glyph}" FontSize="11"/>
-                  </RadioButton>
-                </StackPanel>
+              <!-- Source -->
+              <Border Style="{StaticResource SegmentBox}" Margin="0,6,0,0">
+                <UniformGrid Columns="3">
+                  <RadioButton x:Name="KindActors" Style="{StaticResource Segment}" GroupName="Source" Content="Actors" IsChecked="True" Checked="OnSourceChanged" ToolTip="Placeable actor paks (props, characters, weapons…)"/>
+                  <RadioButton x:Name="KindMapProtos" Style="{StaticResource Segment}" GroupName="Source" Content="Map pieces" Checked="OnSourceChanged" ToolTip="Prototypes of the open map(s): native buildings, walls, props"/>
+                  <RadioButton x:Name="KindLevels" Style="{StaticResource Segment}" GroupName="Source" Content="Levels" Checked="OnSourceChanged" ToolTip="Level paks you can open as the scene's background"/>
+                </UniformGrid>
               </Border>
-            </Grid>
-          </StackPanel>
+            </StackPanel>
 
-          <!-- Compact detail card (World Editor workspace) -->
-          <Border x:Name="CompactDetail" DockPanel.Dock="Bottom" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Background="{StaticResource Bg2}">
-            <StackPanel Margin="14,12,14,14">
-              <Grid Margin="0,0,0,10">
-                <Border x:Name="PreviewHostCompact" Height="132" Background="{StaticResource ViewportSky}" BorderBrush="{StaticResource Line}" BorderThickness="1" ClipToBounds="True" ToolTip="Drag to orbit · wheel to zoom"/>
-                <TextBlock x:Name="CompactPreviewStatus" Text="Select an asset to preview it" Style="{StaticResource Dim}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12" IsHitTestVisible="False"/>
-              </Grid>
-              <Grid>
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <TextBlock x:Name="DetailName" Text="No asset selected" Style="{StaticResource Title}" FontSize="15"/>
-                <ToggleButton x:Name="FavToggle" Grid.Column="1" Style="{StaticResource IconToggle}" Click="OnToggleFavorite" ToolTip="Favourite" IsEnabled="False">
-                  <TextBlock x:Name="FavToggleGlyph" Text="&#xE734;" Style="{StaticResource Glyph}" FontSize="12"/>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition x:Name="CategoryTreeRow" Height="150" MinHeight="48"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" MinHeight="80"/>
+              </Grid.RowDefinitions>
+
+              <!-- Categories and archives (built from the indexed content) -->
+              <Border Margin="6,6,6,0" Background="{StaticResource Input}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="3">
+                <TreeView x:Name="CategoryTree" Margin="2" SelectedItemChanged="OnCategorySelected" ToolTip="Categories are inferred from asset names; expand one to filter by archive"/>
+              </Border>
+              <GridSplitter Grid.Row="1" Height="5" Background="Transparent" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted"/>
+
+              <!-- Filters, sorting, view -->
+              <Grid Grid.Row="2" Margin="6,0,6,4">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <ToggleButton x:Name="FavOnly" Style="{StaticResource IconToggle}" Click="OnFilterChanged" ToolTip="Show favourites only" Padding="5,3">
+                  <StackPanel Orientation="Horizontal">
+                    <Path x:Name="FavOnlyGlyph" Data="{StaticResource I.Star}" Style="{StaticResource Icon}" RenderTransformOrigin="0.5,0.5">
+                      <Path.LayoutTransform><ScaleTransform ScaleX="0.8" ScaleY="0.8"/></Path.LayoutTransform>
+                    </Path>
+                    <TextBlock Text="Favourites" FontSize="11" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                  </StackPanel>
                 </ToggleButton>
+                <ComboBox x:Name="SortBox" Grid.Column="1" Margin="6,0" SelectionChanged="OnFilterChanged" ToolTip="Sort order" FontSize="11.5">
+                  <ComboBoxItem Content="Name A–Z" IsSelected="True"/>
+                  <ComboBoxItem Content="Name Z–A"/>
+                  <ComboBoxItem Content="Largest first"/>
+                  <ComboBoxItem Content="Smallest first"/>
+                  <ComboBoxItem Content="Archive"/>
+                </ComboBox>
+                <Border Grid.Column="2" Style="{StaticResource SegmentBox}">
+                  <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="ViewList" Style="{StaticResource Segment}" GroupName="BrowserView" Width="26" Padding="0,2" IsChecked="True" Checked="OnBrowserViewChanged" ToolTip="List view">
+                      <Path Data="{StaticResource I.List}" Style="{StaticResource Icon}"/>
+                    </RadioButton>
+                    <RadioButton x:Name="ViewGrid" Style="{StaticResource Segment}" GroupName="BrowserView" Width="26" Padding="0,2" Checked="OnBrowserViewChanged" ToolTip="Grid view">
+                      <Path Data="{StaticResource I.Tiles}" Style="{StaticResource Icon}"/>
+                    </RadioButton>
+                  </StackPanel>
+                </Border>
               </Grid>
-              <TextBlock x:Name="AssetInfo" Text="Waiting for asset index…" Style="{StaticResource Dim}" Margin="0,3,0,10" MaxHeight="64" TextTrimming="CharacterEllipsis"/>
-              <Grid>
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                <Button x:Name="PlaceButton" Style="{StaticResource Primary}" Content="Place in scene" Click="OnPlaceAsset" IsEnabled="False" ToolTip="Places the asset at the point under the viewport centre (or drag it into the viewport)"/>
-                <Button x:Name="OpenMapButton" Grid.Column="2" Content="Open map" Click="OnOpenMap" IsEnabled="False" ToolTip="Opens the level as the scene's read-only background"/>
-              </Grid>
-            </StackPanel>
-          </Border>
 
-          <!-- Results -->
-          <Grid Margin="4,0,4,0">
-            <ListBox x:Name="AssetList" ItemTemplate="{StaticResource RowTemplate}"
-                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                     SelectionChanged="OnAssetSelected" MouseDoubleClick="OnAssetDoubleClick" PreviewMouseMove="OnAssetDragStart"/>
-            <ListBox x:Name="AssetGrid" Visibility="Collapsed" Padding="10,0,4,0"
-                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="OnAssetGridSizeChanged">
-              <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                  <Setter Property="Focusable" Value="False"/>
-                  <Setter Property="Template">
-                    <Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate></Setter.Value>
-                  </Setter>
-                </Style>
-              </ListBox.ItemContainerStyle>
-              <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:BrowserRow}">
-                  <ItemsControl ItemsSource="{Binding Items}" ItemTemplate="{StaticResource TileTemplate}">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate><UniformGrid Rows="1" Columns="{Binding Columns}"/></ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                  </ItemsControl>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-            <StackPanel x:Name="BrowserEmpty" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24" Visibility="Collapsed" IsHitTestVisible="False">
-              <TextBlock x:Name="BrowserEmptyTitle" Text="Nothing here" Style="{StaticResource Title}" FontSize="15" HorizontalAlignment="Center"/>
-              <TextBlock x:Name="BrowserEmptyText" Style="{StaticResource Dim}" TextAlignment="Center" Margin="0,6,0,0" MaxWidth="220"/>
-            </StackPanel>
-          </Grid>
-        </DockPanel>
-      </Border>
-      <GridSplitter x:Name="LeftSplitter" Grid.Column="1" Width="5" Margin="-2,0" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted" Panel.ZIndex="5"/>
+              <!-- Results -->
+              <Grid Grid.Row="3" Margin="2,0,2,4">
+                <ListBox x:Name="AssetList" ItemTemplate="{StaticResource RowTemplate}" Padding="4,0"
+                         VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         SelectionChanged="OnAssetSelected" MouseDoubleClick="OnAssetDoubleClick" PreviewMouseMove="OnAssetDragStart"/>
+                <ListBox x:Name="AssetGrid" Visibility="Collapsed" Padding="6,0,2,0"
+                         VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="OnAssetGridSizeChanged">
+                  <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                      <Setter Property="Focusable" Value="False"/>
+                      <Setter Property="Template">
+                        <Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate></Setter.Value>
+                      </Setter>
+                    </Style>
+                  </ListBox.ItemContainerStyle>
+                  <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:BrowserRow}">
+                      <ItemsControl ItemsSource="{Binding Items}" ItemTemplate="{StaticResource TileTemplate}">
+                        <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate><UniformGrid Rows="1" Columns="{Binding Columns}"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                      </ItemsControl>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel x:Name="BrowserEmpty" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24" Visibility="Collapsed" IsHitTestVisible="False">
+                  <TextBlock x:Name="BrowserEmptyTitle" Text="Nothing here" Style="{StaticResource Title}" FontSize="14" HorizontalAlignment="Center"/>
+                  <TextBlock x:Name="BrowserEmptyText" Style="{StaticResource Dim}" TextAlignment="Center" Margin="0,6,0,0" MaxWidth="220"/>
+                </StackPanel>
+              </Grid>
+            </Grid>
+          </DockPanel>
+        </Border>
+      </Grid>
+      <GridSplitter x:Name="LeftSplitter" Grid.Column="1" Width="3" Background="Transparent" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted" Panel.ZIndex="5"/>
 
       <!-- ============================================== centre -->
       <Grid Grid.Column="2">
-        <!-- World view -->
+        <!-- World view: toolbar, viewport, asset workspace -->
         <Grid x:Name="WorldView" SizeChanged="OnWorldViewSizeChanged">
-          <Border x:Name="ViewportHost" Background="{StaticResource ViewportSky}" ClipToBounds="True" Focusable="True" AllowDrop="True" FocusVisualStyle="{x:Null}"
-                  MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportWheel"
-                  Drop="OnViewportDrop" DragOver="OnViewportDragOver" DragLeave="OnViewportDragLeave">
-            <Grid>
-              <Viewport3D x:Name="Viewport" ClipToBounds="True" IsHitTestVisible="False"/>
-              <Rectangle Fill="{StaticResource Vignette}" IsHitTestVisible="False"/>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" MinHeight="200"/>
+            <RowDefinition x:Name="WorkspaceSplitRow" Height="3"/>
+            <RowDefinition x:Name="WorkspaceRow" Height="230" MinHeight="140"/>
+          </Grid.RowDefinitions>
+
+          <!-- Viewport toolbar -->
+          <Border Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1,1,1,0" CornerRadius="4,4,0,0" Padding="4,3">
+            <Grid x:Name="ToolbarGrid">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+
+              <!-- Transform + arena tools -->
+              <StackPanel x:Name="ToolOverlay" Orientation="Horizontal" VerticalAlignment="Center">
+                <ToggleButton x:Name="ToolSelect" Style="{StaticResource Tool}" Click="OnToolSelect" ToolTip="Select — click objects, no gizmo">
+                  <Grid Width="28" Height="24"><Path Data="{StaticResource I.Select}" Style="{StaticResource Icon}"/><TextBlock x:Name="KeySelect" Text="Q" Style="{StaticResource KeyBadge}"/></Grid>
+                </ToggleButton>
+                <ToggleButton x:Name="ToolMove" Style="{StaticResource Tool}" IsChecked="True" Click="OnToolMove" ToolTip="Move along an axis · hold Ctrl to snap 0.25 m">
+                  <Grid Width="28" Height="24"><Path Data="{StaticResource I.Move}" Style="{StaticResource Icon}"/><TextBlock x:Name="KeyMove" Text="W" Style="{StaticResource KeyBadge}"/></Grid>
+                </ToggleButton>
+                <ToggleButton x:Name="ToolRotate" Style="{StaticResource Tool}" Click="OnToolRotate" ToolTip="Rotate about an axis · hold Ctrl to snap 15°">
+                  <Grid Width="28" Height="24"><Path Data="{StaticResource I.Rotate}" Style="{StaticResource Icon}"/><TextBlock x:Name="KeyRotate" Text="E" Style="{StaticResource KeyBadge}"/></Grid>
+                </ToggleButton>
+                <ToggleButton x:Name="ToolScale" Style="{StaticResource Tool}" Click="OnToolScale" ToolTip="Scale along an axis · Shift for uniform, Ctrl to snap">
+                  <Grid Width="28" Height="24"><Path Data="{StaticResource I.Scale}" Style="{StaticResource Icon}"/><TextBlock x:Name="KeyScale" Text="R" Style="{StaticResource KeyBadge}"/></Grid>
+                </ToggleButton>
+                <Rectangle Style="{StaticResource ToolDivider}"/>
+                <ToggleButton x:Name="ToolBoundary" Style="{StaticResource Tool}" Click="OnToolBoundary" ToolTip="Arena boundary — click the ground to add points · Esc to finish">
+                  <Grid Width="28" Height="24"><Path Data="{StaticResource I.Boundary}" Style="{StaticResource Icon}"/><TextBlock x:Name="KeyBoundary" Text="B" Style="{StaticResource KeyBadge}"/></Grid>
+                </ToggleButton>
+                <Rectangle Style="{StaticResource ToolDivider}"/>
+                <Button Style="{StaticResource Ghost}" Click="OnAddSpawnWlf" ToolTip="Add a WLF spawn at the viewport centre" Padding="6,4">
+                  <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Spawn}" Style="{StaticResource Icon}" Stroke="{StaticResource TeamWlf}" Margin="0,0,5,0"/><TextBlock Text="WLF" FontSize="11.5" VerticalAlignment="Center"/></StackPanel>
+                </Button>
+                <Button Style="{StaticResource Ghost}" Click="OnAddSpawnScars" ToolTip="Add a Seraphite spawn at the viewport centre" Padding="6,4">
+                  <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Spawn}" Style="{StaticResource Icon}" Stroke="{StaticResource TeamScar}" Margin="0,0,5,0"/><TextBlock Text="Seraphite" FontSize="11.5" VerticalAlignment="Center"/></StackPanel>
+                </Button>
+              </StackPanel>
+
+              <!-- Projection, layers, framing -->
+              <StackPanel x:Name="LayerOverlay" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Style="{StaticResource SegmentBox}" VerticalAlignment="Center">
+                  <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="ProjPerspective" Style="{StaticResource Segment}" GroupName="Projection" IsChecked="True" Padding="7,2" Checked="OnProjectionChanged" ToolTip="Perspective projection">
+                      <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Cube}" Style="{StaticResource Icon}" Margin="0,0,4,0"/><TextBlock Text="Persp" VerticalAlignment="Center"/></StackPanel>
+                    </RadioButton>
+                    <RadioButton x:Name="ProjOrtho" Style="{StaticResource Segment}" GroupName="Projection" Padding="7,2" Checked="OnProjectionChanged" ToolTip="Orthographic projection (wheel zooms, no foreshortening)">
+                      <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Square}" Style="{StaticResource Icon}" Margin="0,0,4,0"/><TextBlock Text="Ortho" VerticalAlignment="Center"/></StackPanel>
+                    </RadioButton>
+                  </StackPanel>
+                </Border>
+                <Rectangle Style="{StaticResource ToolDivider}"/>
+                <ToggleButton x:Name="ChipMap" Style="{StaticResource IconToggle}" IsChecked="True" Click="OnLayerChip" ToolTip="Show map geometry" Padding="6,4">
+                  <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Map}" Style="{StaticResource Icon}" Margin="0,0,4,0"/><TextBlock Text="Map" VerticalAlignment="Center"/></StackPanel>
+                </ToggleButton>
+                <ToggleButton x:Name="ChipVegetation" Style="{StaticResource IconToggle}" IsChecked="True" Click="OnLayerChip" ToolTip="Show map vegetation" Padding="6,4">
+                  <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Leaf}" Style="{StaticResource Icon}" Margin="0,0,4,0"/><TextBlock Text="Foliage" VerticalAlignment="Center"/></StackPanel>
+                </ToggleButton>
+                <ToggleButton x:Name="ChipGrid" Style="{StaticResource IconToggle}" IsChecked="True" Click="OnLayerChip" ToolTip="Show ground grid  (G)" Padding="6,4">
+                  <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Grid}" Style="{StaticResource Icon}" Margin="0,0,4,0"/><TextBlock Text="Grid" VerticalAlignment="Center"/></StackPanel>
+                </ToggleButton>
+                <Rectangle Style="{StaticResource ToolDivider}"/>
+                <Button Style="{StaticResource IconButton}" Click="OnFocus" ToolTip="Focus the selection  (F)">
+                  <Path Data="{StaticResource I.Crosshair}" Style="{StaticResource Icon}"/>
+                </Button>
+                <Button Style="{StaticResource IconButton}" Click="OnFrameAll" ToolTip="Frame everything  (Shift+F)">
+                  <Path Data="{StaticResource I.Frame}" Style="{StaticResource Icon}"/>
+                </Button>
+                <Button Style="{StaticResource IconButton}" Click="OnToggleMaximiseButton" ToolTip="Maximise viewport  (F11)">
+                  <Path x:Name="MaximiseGlyph" Data="{StaticResource I.Maximise}" Style="{StaticResource Icon}"/>
+                </Button>
+              </StackPanel>
             </Grid>
           </Border>
-          <Border x:Name="DropHighlight" BorderBrush="{StaticResource Amber}" BorderThickness="1" IsHitTestVisible="False" Visibility="Collapsed" Margin="0"/>
 
-          <!-- Transform + arena tools -->
-          <Border x:Name="ToolOverlay" Style="{StaticResource Overlay}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12">
-            <StackPanel Orientation="Horizontal">
-              <ToggleButton x:Name="ToolSelect" Style="{StaticResource Tool}" Click="OnToolSelect" ToolTip="Select only, no gizmo">
-                <StackPanel Orientation="Horizontal"><TextBlock Text="Select"/><TextBlock x:Name="KeySelect" Text="Q" Opacity="0.55" Margin="6,0,0,0"/></StackPanel>
-              </ToggleButton>
-              <ToggleButton x:Name="ToolMove" Style="{StaticResource Tool}" IsChecked="True" Click="OnToolMove" ToolTip="Move along an axis · hold Ctrl to snap 0.25 m">
-                <StackPanel Orientation="Horizontal"><TextBlock Text="Move"/><TextBlock x:Name="KeyMove" Text="W" Opacity="0.55" Margin="6,0,0,0"/></StackPanel>
-              </ToggleButton>
-              <ToggleButton x:Name="ToolRotate" Style="{StaticResource Tool}" Click="OnToolRotate" ToolTip="Rotate about an axis · hold Ctrl to snap 15°">
-                <StackPanel Orientation="Horizontal"><TextBlock Text="Rotate"/><TextBlock x:Name="KeyRotate" Text="E" Opacity="0.55" Margin="6,0,0,0"/></StackPanel>
-              </ToggleButton>
-              <ToggleButton x:Name="ToolScale" Style="{StaticResource Tool}" Click="OnToolScale" ToolTip="Scale along an axis · Shift for uniform, Ctrl to snap">
-                <StackPanel Orientation="Horizontal"><TextBlock Text="Scale"/><TextBlock x:Name="KeyScale" Text="R" Opacity="0.55" Margin="6,0,0,0"/></StackPanel>
-              </ToggleButton>
-              <Rectangle Width="1" Fill="{StaticResource Line2}" Margin="2,6"/>
-              <ToggleButton x:Name="ToolBoundary" Style="{StaticResource Tool}" Click="OnToolBoundary" ToolTip="Click the ground to add arena boundary points · Esc to finish">
-                <StackPanel Orientation="Horizontal"><TextBlock Text="Boundary"/><TextBlock x:Name="KeyBoundary" Text="B" Opacity="0.55" Margin="6,0,0,0"/></StackPanel>
-              </ToggleButton>
-              <Rectangle Width="1" Fill="{StaticResource Line2}" Margin="2,6"/>
-              <Button Style="{StaticResource Ghost}" Click="OnAddSpawnWlf" ToolTip="Add a WLF spawn at the viewport centre">
-                <StackPanel Orientation="Horizontal"><Rectangle Width="6" Height="6" Fill="#5C8DB8" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="WLF spawn"/></StackPanel>
-              </Button>
-              <Button Style="{StaticResource Ghost}" Click="OnAddSpawnScars" ToolTip="Add a Seraphite spawn at the viewport centre">
-                <StackPanel Orientation="Horizontal"><Rectangle Width="6" Height="6" Fill="#B5523B" Margin="0,0,7,0" VerticalAlignment="Center"/><TextBlock Text="Seraphite spawn"/></StackPanel>
-              </Button>
-            </StackPanel>
-          </Border>
-
-          <!-- Layers + framing -->
-          <Border x:Name="LayerOverlay" Style="{StaticResource Overlay}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12">
-            <StackPanel Orientation="Horizontal">
-              <ToggleButton x:Name="ChipMap" Style="{StaticResource IconToggle}" IsChecked="True" Click="OnLayerChip" Content="Map" Padding="9,5" ToolTip="Show map geometry"/>
-              <ToggleButton x:Name="ChipVegetation" Style="{StaticResource IconToggle}" IsChecked="True" Click="OnLayerChip" Content="Vegetation" Padding="9,5" ToolTip="Show map vegetation"/>
-              <ToggleButton x:Name="ChipGrid" Style="{StaticResource IconToggle}" IsChecked="True" Click="OnLayerChip" Content="Grid" Padding="9,5" ToolTip="Show ground grid  (G)"/>
-              <Rectangle Width="1" Fill="{StaticResource Line2}" Margin="2,6"/>
-              <Button Style="{StaticResource Ghost}" Click="OnFrameAll" ToolTip="Frame everything  (Shift+F)" Content="Frame"/>
-              <Button Style="{StaticResource Ghost}" Click="OnToggleMaximiseButton" ToolTip="Maximise viewport  (F11)" Padding="8,5">
-                <TextBlock x:Name="MaximiseGlyph" Text="&#xE740;" Style="{StaticResource Glyph}" FontSize="11"/>
-              </Button>
-            </StackPanel>
-          </Border>
-
-          <!-- Boundary drawing banner -->
-          <Border x:Name="BoundaryBanner" Style="{StaticResource Overlay}" BorderBrush="{StaticResource AmberLo}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,58,0,0" Padding="14,7" Visibility="Collapsed" IsHitTestVisible="False">
-            <StackPanel Orientation="Horizontal">
-              <Ellipse Width="6" Height="6" Fill="{StaticResource Amber}" Margin="0,0,9,0" VerticalAlignment="Center"/>
-              <TextBlock x:Name="BoundaryBannerText" Text="Drawing boundary — click the ground to add points · Esc to finish" FontSize="11.5" Foreground="{StaticResource Text}"/>
-            </StackPanel>
-          </Border>
-
-          <!-- Camera hint -->
-          <Border Style="{StaticResource Overlay}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="12" Padding="10,6" Background="#99111311" BorderThickness="0" IsHitTestVisible="False">
-            <TextBlock FontSize="10.5" Foreground="{StaticResource Text3}">
-              <Run Text="RMB" Foreground="{StaticResource Text2}"/><Run Text=" look   "/><Run x:Name="HintFly" Text="WASD" Foreground="{StaticResource Text2}"/><Run Text=" fly   "/><Run x:Name="HintUpDown" Text="Q/E" Foreground="{StaticResource Text2}"/><Run Text=" down/up   "/><Run Text="Alt+LMB" Foreground="{StaticResource Text2}"/><Run Text=" orbit   "/><Run Text="MMB" Foreground="{StaticResource Text2}"/><Run Text=" pan   "/><Run Text="Wheel" Foreground="{StaticResource Text2}"/><Run Text=" dolly   "/><Run Text="Shift" Foreground="{StaticResource Text2}"/><Run Text=" faster   "/><Run x:Name="HintShortcuts" Text="F1" Foreground="{StaticResource Text2}"/><Run Text=" shortcuts"/>
-            </TextBlock>
-          </Border>
-
-          <!-- Empty state -->
-          <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="420">
-            <TextBlock Text="AN EMPTY WORLD" Style="{StaticResource MicroAccent}" HorizontalAlignment="Center"/>
-            <TextBlock Text="Open a level to begin" Style="{StaticResource Title}" FontSize="28" HorizontalAlignment="Center" Margin="0,8,0,8"/>
-            <TextBlock Text="Pick a level from the browser to load it as a read-only backdrop, then place native buildings, props and spawns on top." Style="{StaticResource Dim}" FontSize="12" TextAlignment="Center" Foreground="{StaticResource Text2}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
-              <Button Style="{StaticResource Primary}" Content="Browse levels" Click="OnBrowseLevels" Margin="0,0,8,0" Padding="16,7"/>
-              <Button Content="Open scene…" Click="OnOpenScene" Padding="16,7"/>
-            </StackPanel>
-          </StackPanel>
-
-          <!-- Keyboard shortcut sheet -->
-          <Border x:Name="ShortcutSheet" Style="{StaticResource Overlay}" Background="#F2111311" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="26,20" Visibility="Collapsed" MouseDown="OnShortcutSheetClick">
-            <StackPanel>
-              <Grid Margin="0,0,0,12">
-                <TextBlock Text="KEYBOARD SHORTCUTS" Style="{StaticResource MicroAccent}"/>
-                <TextBlock Text="F1 / Esc to close" Style="{StaticResource Micro}" HorizontalAlignment="Right"/>
+          <!-- Viewport -->
+          <Grid Grid.Row="1">
+            <Border x:Name="ViewportHost" Background="{StaticResource ViewportSky}" ClipToBounds="True" Focusable="True" AllowDrop="True" FocusVisualStyle="{x:Null}"
+                    BorderBrush="{StaticResource Line}" BorderThickness="1"
+                    MouseDown="OnViewportMouseDown" MouseUp="OnViewportMouseUp" MouseMove="OnViewportMouseMove" MouseWheel="OnViewportWheel"
+                    Drop="OnViewportDrop" DragOver="OnViewportDragOver" DragLeave="OnViewportDragLeave">
+              <Grid>
+                <Viewport3D x:Name="Viewport" ClipToBounds="True" IsHitTestVisible="False"/>
+                <Rectangle Fill="{StaticResource Vignette}" IsHitTestVisible="False"/>
               </Grid>
-              <Grid x:Name="ShortcutGrid">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="270"/><ColumnDefinition Width="36"/><ColumnDefinition Width="270"/></Grid.ColumnDefinitions>
-              </Grid>
+            </Border>
+            <Border x:Name="DropHighlight" BorderBrush="{StaticResource Accent}" BorderThickness="2" IsHitTestVisible="False" Visibility="Collapsed" Background="{StaticResource AccentSoft}"/>
+
+            <!-- Projection label -->
+            <TextBlock x:Name="ViewLabel" Text="Perspective" FontSize="11" Foreground="{StaticResource Text3}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,9,0,0" IsHitTestVisible="False"/>
+
+            <!-- Boundary drawing banner -->
+            <Border x:Name="BoundaryBanner" Style="{StaticResource Overlay}" BorderBrush="{StaticResource Warning}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,12,0,0" Padding="12,6" Visibility="Collapsed" IsHitTestVisible="False">
+              <StackPanel Orientation="Horizontal">
+                <Ellipse Width="7" Height="7" Fill="{StaticResource Warning}" Margin="0,0,9,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="BoundaryBannerText" Text="Drawing boundary — click the ground to add points · Esc to finish" FontSize="11.5" Foreground="{StaticResource Text}"/>
+              </StackPanel>
+            </Border>
+
+            <!-- Orientation gizmo (click an axis to look along it) -->
+            <Canvas x:Name="AxisGizmo" Width="76" Height="76" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0" Background="Transparent" ToolTip="Click an axis to view along it"/>
+
+            <!-- Camera hint -->
+            <Border Style="{StaticResource Overlay}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" Padding="9,5" Background="#B3111318" BorderThickness="0" IsHitTestVisible="False">
+              <TextBlock FontSize="10.5" Foreground="{StaticResource Text4}">
+                <Run Text="RMB" Foreground="{StaticResource Text2}"/><Run Text=" look   "/><Run x:Name="HintFly" Text="WASD" Foreground="{StaticResource Text2}"/><Run Text=" fly   "/><Run x:Name="HintUpDown" Text="Q/E" Foreground="{StaticResource Text2}"/><Run Text=" down/up   "/><Run Text="Alt+LMB" Foreground="{StaticResource Text2}"/><Run Text=" orbit   "/><Run Text="MMB" Foreground="{StaticResource Text2}"/><Run Text=" pan   "/><Run Text="Wheel" Foreground="{StaticResource Text2}"/><Run Text=" dolly   "/><Run Text="Shift" Foreground="{StaticResource Text2}"/><Run Text=" faster   "/><Run x:Name="HintShortcuts" Text="F1" Foreground="{StaticResource Text2}"/><Run Text=" shortcuts"/>
+              </TextBlock>
+            </Border>
+
+            <!-- Empty state -->
+            <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="420">
+              <Border Width="44" Height="44" CornerRadius="10" Background="{StaticResource AccentSoft}" BorderBrush="{StaticResource AccentLo}" BorderThickness="1" HorizontalAlignment="Center">
+                <Path Data="{StaticResource I.Globe}" Style="{StaticResource Icon}" Stroke="{StaticResource AccentHi}">
+                  <Path.LayoutTransform><ScaleTransform ScaleX="1.4" ScaleY="1.4"/></Path.LayoutTransform>
+                </Path>
+              </Border>
+              <TextBlock Text="Open a level to begin" Style="{StaticResource Title}" FontSize="22" HorizontalAlignment="Center" Margin="0,14,0,6"/>
+              <TextBlock Text="Pick a level from the browser to load it as a read-only backdrop, then place native buildings, props and spawns on top." Style="{StaticResource Dim}" FontSize="12" TextAlignment="Center" Foreground="{StaticResource Text3}"/>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+                <Button Style="{StaticResource Primary}" Content="Browse levels" Click="OnBrowseLevels" Margin="0,0,8,0" Padding="16,7"/>
+                <Button Content="Open scene…" Click="OnOpenScene" Padding="16,7"/>
+              </StackPanel>
             </StackPanel>
+
+            <!-- Keyboard shortcut sheet -->
+            <Border x:Name="ShortcutSheet" Style="{StaticResource Overlay}" Background="#F5191C23" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24,18" Visibility="Collapsed" MouseDown="OnShortcutSheetClick">
+              <StackPanel>
+                <Grid Margin="0,0,0,12">
+                  <TextBlock Text="Keyboard shortcuts" Style="{StaticResource Title}" FontSize="15"/>
+                  <TextBlock Text="F1 / Esc to close" Style="{StaticResource Micro}" HorizontalAlignment="Right"/>
+                </Grid>
+                <Grid x:Name="ShortcutGrid">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="270"/><ColumnDefinition Width="36"/><ColumnDefinition Width="270"/></Grid.ColumnDefinitions>
+                </Grid>
+              </StackPanel>
+            </Border>
+          </Grid>
+
+          <GridSplitter x:Name="WorkspaceSplitter" Grid.Row="2" Height="3" Background="Transparent" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted" Panel.ZIndex="5"/>
+
+          <!-- Asset Workspace -->
+          <Border x:Name="AssetWorkspace" Grid.Row="3" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4">
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Background="{StaticResource Bg2}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" CornerRadius="4,4,0,0" Height="30">
+                <DockPanel>
+                  <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Click="OnHideWorkspacePanel" ToolTip="Hide the Asset Workspace (View › Panels)" Margin="0,0,3,0">
+                    <Path Data="{StaticResource I.Close}" Style="{StaticResource Icon}" RenderTransformOrigin="0.5,0.5"><Path.RenderTransform><ScaleTransform ScaleX="0.8" ScaleY="0.8"/></Path.RenderTransform></Path>
+                  </Button>
+                  <TextBlock DockPanel.Dock="Right" x:Name="WsSubject" Style="{StaticResource Count}" FontFamily="{StaticResource Body}" FontSize="11" Margin="0,0,8,0" MaxWidth="360" TextTrimming="CharacterEllipsis"/>
+                  <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="WsTabAssets" Style="{StaticResource PanelTab}" GroupName="WsTab" IsChecked="True" Checked="OnWorkspaceTabChanged" ToolTip="Assets used by the current scene">
+                      <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Cube}" Style="{StaticResource Icon}" Margin="0,0,6,0"/><TextBlock Text="Assets" VerticalAlignment="Center"/></StackPanel>
+                    </RadioButton>
+                    <RadioButton x:Name="WsTabMaterials" Style="{StaticResource PanelTab}" GroupName="WsTab" Checked="OnWorkspaceTabChanged" ToolTip="Materials of the selected asset">
+                      <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Material}" Style="{StaticResource Icon}" Margin="0,0,6,0"/><TextBlock Text="Materials" VerticalAlignment="Center"/></StackPanel>
+                    </RadioButton>
+                    <RadioButton x:Name="WsTabTextures" Style="{StaticResource PanelTab}" GroupName="WsTab" Checked="OnWorkspaceTabChanged" ToolTip="Decoded base-colour textures of the selected asset">
+                      <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Image}" Style="{StaticResource Icon}" Margin="0,0,6,0"/><TextBlock Text="Textures" VerticalAlignment="Center"/></StackPanel>
+                    </RadioButton>
+                    <RadioButton x:Name="WsTabMeshes" Style="{StaticResource PanelTab}" GroupName="WsTab" Checked="OnWorkspaceTabChanged" ToolTip="LOD0 submeshes of the selected asset">
+                      <StackPanel Orientation="Horizontal"><Path Data="{StaticResource I.Mesh}" Style="{StaticResource Icon}" Margin="0,0,6,0"/><TextBlock Text="Meshes" VerticalAlignment="Center"/></StackPanel>
+                    </RadioButton>
+                  </StackPanel>
+                </DockPanel>
+              </Border>
+
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="280"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+
+                <!-- Selected asset: preview + actions (World Editor) -->
+                <Border x:Name="CompactDetail" BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
+                  <Grid Margin="8">
+                    <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                      <Grid Width="116" VerticalAlignment="Stretch" MaxHeight="140">
+                        <Border x:Name="PreviewHostCompact" Background="{StaticResource ViewportSky}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="3" ClipToBounds="True" ToolTip="Drag to orbit · wheel to zoom"/>
+                        <TextBlock x:Name="CompactPreviewStatus" Text="Select an asset to preview it" Style="{StaticResource Dim}" FontSize="10.5" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8" IsHitTestVisible="False"/>
+                      </Grid>
+                      <DockPanel Grid.Column="1" Margin="10,0,0,0">
+                        <Grid DockPanel.Dock="Top">
+                          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                          <TextBlock x:Name="DetailName" Text="No asset selected" Style="{StaticResource Title}" FontSize="13" VerticalAlignment="Center"/>
+                          <ToggleButton x:Name="FavToggle" Grid.Column="1" Style="{StaticResource IconToggle}" Click="OnToggleFavorite" ToolTip="Favourite" IsEnabled="False" Padding="3">
+                            <Path x:Name="FavToggleGlyph" Data="{StaticResource I.Star}" Style="{StaticResource Icon}"/>
+                          </ToggleButton>
+                        </Grid>
+                        <TextBlock x:Name="AssetInfo" Text="Waiting for asset index…" Style="{StaticResource Dim}" FontSize="10.5" Margin="0,3,0,0" TextTrimming="CharacterEllipsis"/>
+                      </DockPanel>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="0,8,0,0">
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="6"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                      <Button x:Name="PlaceButton" Style="{StaticResource Primary}" Content="Place in scene" Click="OnPlaceAsset" IsEnabled="False" ToolTip="Places the asset at the point under the viewport centre (or drag it into the viewport)"/>
+                      <Button x:Name="OpenMapButton" Grid.Column="2" Content="Open map" Click="OnOpenMap" IsEnabled="False" ToolTip="Opens the level as the scene's read-only background"/>
+                    </Grid>
+                  </Grid>
+                </Border>
+
+                <!-- Cards -->
+                <Grid Grid.Column="1">
+                  <ScrollViewer x:Name="WsScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="8,8,4,4">
+                    <WrapPanel x:Name="WsCards"/>
+                  </ScrollViewer>
+                  <StackPanel x:Name="WsEmpty" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" MaxWidth="360">
+                    <TextBlock x:Name="WsEmptyTitle" Text="No assets in the scene" Style="{StaticResource Title}" FontSize="13" HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="WsEmptyText" Text="Place assets from the browser; they are listed here." Style="{StaticResource Dim}" TextAlignment="Center" Margin="0,4,0,0"/>
+                  </StackPanel>
+                </Grid>
+              </Grid>
+            </DockPanel>
           </Border>
         </Grid>
 
         <!-- Settings view -->
-        <Grid x:Name="SettingsView" Visibility="Collapsed" Background="{StaticResource Bg0}">
-          <Grid.ColumnDefinitions><ColumnDefinition Width="240"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-          <Border Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
-            <DockPanel Margin="0,22,0,16">
-              <StackPanel DockPanel.Dock="Top" Margin="22,0,22,14">
-                <TextBlock Text="PREFERENCES" Style="{StaticResource MicroAccent}"/>
-                <TextBlock Text="Settings" Style="{StaticResource Title}" FontSize="26" Margin="0,6,0,0"/>
+        <Grid x:Name="SettingsView" Visibility="Collapsed">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="3"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <Border Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4">
+            <DockPanel Margin="0,18,0,14">
+              <StackPanel DockPanel.Dock="Top" Margin="18,0,18,14">
+                <TextBlock Text="Preferences" Style="{StaticResource Micro}"/>
+                <TextBlock Text="Settings" Style="{StaticResource Title}" FontSize="22" Margin="0,4,0,0"/>
               </StackPanel>
-              <TextBlock DockPanel.Dock="Bottom" x:Name="SettingsFileText" Style="{StaticResource Dim}" FontSize="10.5" Margin="22,0" TextWrapping="Wrap"/>
+              <TextBlock DockPanel.Dock="Bottom" x:Name="SettingsFileText" Style="{StaticResource Dim}" FontSize="10.5" Margin="18,0" TextWrapping="Wrap"/>
               <ListBox x:Name="SettingsSections" SelectionChanged="OnSettingsSectionChanged" Margin="8,0">
                 <ListBox.ItemContainerStyle>
                   <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                    <Setter Property="Padding" Value="14,9"/>
-                    <Setter Property="FontFamily" Value="{StaticResource Display}"/>
-                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="Padding" Value="12,7"/>
+                    <Setter Property="FontSize" Value="12.5"/>
                   </Style>
                 </ListBox.ItemContainerStyle>
               </ListBox>
             </DockPanel>
           </Border>
-          <ScrollViewer x:Name="SettingsScroll" Grid.Column="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel x:Name="SettingsContent" MaxWidth="780" HorizontalAlignment="Left" Margin="40,26,40,40"/>
-          </ScrollViewer>
+          <Border Grid.Column="2" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4">
+            <ScrollViewer x:Name="SettingsScroll" VerticalScrollBarVisibility="Auto">
+              <StackPanel x:Name="SettingsContent" MaxWidth="780" HorizontalAlignment="Left" Margin="36,24,36,36"/>
+            </ScrollViewer>
+          </Border>
         </Grid>
 
         <!-- Catalogue view -->
-        <Grid x:Name="CatalogueView" Visibility="Collapsed" Background="{StaticResource Bg0}">
-          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="340"/></Grid.ColumnDefinitions>
-          <Grid>
-            <Border x:Name="PreviewHostLarge" Background="{StaticResource ViewportSky}" ClipToBounds="True"/>
-            <Rectangle Fill="{StaticResource Vignette}" IsHitTestVisible="False"/>
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,24" IsHitTestVisible="False">
-              <TextBlock x:Name="CatKind" Text="ASSET CATALOGUE" Style="{StaticResource MicroAccent}"/>
-              <TextBlock x:Name="CatTitle" Text="Select an asset" Style="{StaticResource Title}" FontSize="32" Margin="0,6,0,0" MaxWidth="720"/>
-              <TextBlock x:Name="CatSubtitle" Style="{StaticResource Dim}" FontSize="12" Foreground="{StaticResource Text2}" Margin="0,4,0,0" MaxWidth="720"/>
-            </StackPanel>
-            <TextBlock x:Name="PreviewHint" Text="Drag to orbit · wheel to zoom" Style="{StaticResource Micro}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,18" IsHitTestVisible="False"/>
-            <TextBlock x:Name="PreviewStatus" Style="{StaticResource Dim}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" TextAlignment="Center" MaxWidth="380"/>
-          </Grid>
-          <Border Grid.Column="1" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1,0,0,0">
-            <DockPanel Margin="20,22,20,20">
-              <StackPanel DockPanel.Dock="Bottom">
-                <Button x:Name="CatPlaceButton" Style="{StaticResource Primary}" Content="Place in World Editor" Padding="12,9" Click="OnCataloguePlace" IsEnabled="False"/>
-                <Grid Margin="0,8,0,0">
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                  <Button x:Name="CatOpenMapButton" Content="Open map" Padding="12,8" Click="OnCatalogueOpenMap" IsEnabled="False"/>
-                  <Button x:Name="CatFavButton" Grid.Column="2" Content="Add to favourites" Padding="12,8" Click="OnToggleFavorite" IsEnabled="False"/>
+        <Grid x:Name="CatalogueView" Visibility="Collapsed">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="3"/><ColumnDefinition Width="340"/></Grid.ColumnDefinitions>
+          <Border BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4" ClipToBounds="True">
+            <Grid>
+              <Border x:Name="PreviewHostLarge" Background="{StaticResource ViewportSky}" ClipToBounds="True"/>
+              <Rectangle Fill="{StaticResource Vignette}" IsHitTestVisible="False"/>
+              <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,20" IsHitTestVisible="False">
+                <TextBlock x:Name="CatKind" Text="ASSET CATALOGUE" Style="{StaticResource Micro}" Foreground="{StaticResource AccentHi}" FontWeight="SemiBold"/>
+                <TextBlock x:Name="CatTitle" Text="Select an asset" Style="{StaticResource Title}" FontSize="26" Margin="0,4,0,0" MaxWidth="720"/>
+                <TextBlock x:Name="CatSubtitle" Style="{StaticResource Dim}" FontSize="12" Foreground="{StaticResource Text3}" Margin="0,4,0,0" MaxWidth="720"/>
+              </StackPanel>
+              <TextBlock x:Name="PreviewHint" Text="Drag to orbit · wheel to zoom" Style="{StaticResource Micro}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,16" IsHitTestVisible="False"/>
+              <TextBlock x:Name="PreviewStatus" Style="{StaticResource Dim}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" TextAlignment="Center" MaxWidth="380"/>
+            </Grid>
+          </Border>
+          <Border Grid.Column="2" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4">
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Style="{StaticResource PanelHeader}" CornerRadius="4,4,0,0">
+                <StackPanel Orientation="Horizontal">
+                  <Path Data="{StaticResource I.Eye}" Style="{StaticResource Icon}" Stroke="{StaticResource Text3}" Margin="0,0,7,0"/>
+                  <TextBlock Text="Asset Details" Style="{StaticResource PanelTitle}"/>
+                </StackPanel>
+              </Border>
+              <StackPanel DockPanel.Dock="Bottom" Margin="12">
+                <Button x:Name="CatPlaceButton" Style="{StaticResource Primary}" Content="Place in World Editor" Padding="12,8" Click="OnCataloguePlace" IsEnabled="False"/>
+                <Grid Margin="0,6,0,0">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="6"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Button x:Name="CatOpenMapButton" Content="Open map" Padding="12,7" Click="OnCatalogueOpenMap" IsEnabled="False"/>
+                  <Button x:Name="CatFavButton" Grid.Column="2" Content="Add to favourites" Padding="12,7" Click="OnToggleFavorite" IsEnabled="False"/>
                 </Grid>
               </StackPanel>
               <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -487,32 +711,22 @@
         </Grid>
       </Grid>
 
-      <GridSplitter x:Name="RightSplitter" Grid.Column="3" Width="5" Margin="-2,0" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted" Panel.ZIndex="5"/>
+      <GridSplitter x:Name="RightSplitter" Grid.Column="3" Width="3" Background="Transparent" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted" Panel.ZIndex="5"/>
 
-      <!-- ============================================== outliner + inspector -->
-      <Grid x:Name="ScenePanel" Grid.Column="4" Background="{StaticResource Bg1}">
-        <Grid.RowDefinitions>
-          <RowDefinition x:Name="OutlinerRow" Height="2*" MinHeight="120"/>
-          <RowDefinition Height="1"/>
-          <RowDefinition x:Name="InspectorRow" Height="3*" MinHeight="160"/>
-        </Grid.RowDefinitions>
-        <DockPanel x:Name="OutlinerPanel">
-          <Grid DockPanel.Dock="Top" Margin="14,14,14,8">
-            <TextBlock Text="SCENE HIERARCHY" Style="{StaticResource MicroAccent}"/>
-            <TextBlock x:Name="OutlinerCount" HorizontalAlignment="Right" FontFamily="{StaticResource Mono}" FontSize="10.5" Foreground="{StaticResource Text3}"/>
-          </Grid>
-          <TreeView x:Name="Hierarchy" Margin="4,0,4,6" SelectedItemChanged="OnHierarchySelected"/>
-        </DockPanel>
-        <GridSplitter x:Name="ScenePanelSplitter" Grid.Row="1" Height="5" Margin="0,-2" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" DragCompleted="OnSplitterDragCompleted" Panel.ZIndex="5"/>
-        <DockPanel x:Name="InspectorPanel" Grid.Row="2">
-          <Grid DockPanel.Dock="Top" Margin="14,14,14,4">
-            <TextBlock Text="INSPECTOR" Style="{StaticResource MicroAccent}"/>
-          </Grid>
+      <!-- ============================================== right: inspector -->
+      <Border x:Name="InspectorPanel" Grid.Column="4" Background="{StaticResource Bg1}" BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="4">
+        <DockPanel>
+          <Border DockPanel.Dock="Top" Style="{StaticResource PanelHeader}" CornerRadius="4,4,0,0">
+            <StackPanel Orientation="Horizontal">
+              <Path Data="{StaticResource I.Eye}" Style="{StaticResource Icon}" Stroke="{StaticResource Text3}" Margin="0,0,7,0"/>
+              <TextBlock Text="Inspector" Style="{StaticResource PanelTitle}"/>
+            </StackPanel>
+          </Border>
           <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel x:Name="PropertiesPanel" Margin="14,0,14,16"/>
+            <StackPanel x:Name="PropertiesPanel" Margin="0,0,0,12"/>
           </ScrollViewer>
         </DockPanel>
-      </Grid>
+      </Border>
     </Grid>
   </DockPanel>
 </Window>

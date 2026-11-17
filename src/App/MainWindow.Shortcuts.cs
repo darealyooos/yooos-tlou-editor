@@ -41,7 +41,7 @@ public partial class MainWindow
         var export = new Button { Content = "Export…", Margin = new Thickness(0, 0, 6, 0), ToolTip = "Save all bindings to a profile (.json)" };
         export.Click += (_, _) => ExportBindings();
         var resetAll = new Button { Content = _confirmResetAll ? "Click again to reset all" : "Reset all", ToolTip = "Restore every default shortcut" };
-        if (_confirmResetAll) resetAll.Foreground = Res("AmberHi");
+        if (_confirmResetAll) resetAll.Foreground = Res("AccentHi");
         resetAll.Click += (_, _) =>
         {
             if (!_confirmResetAll) { _confirmResetAll = true; BuildSettingsPage(); return; }
@@ -84,10 +84,10 @@ public partial class MainWindow
         var conflicts = _bindings.AllConflicts();
         if (conflicts.Count > 0)
         {
-            var warn = new Border { BorderBrush = Res("AmberLo"), BorderThickness = new Thickness(1), Background = Res("AmberWash"), Padding = new Thickness(12, 8, 12, 8), Margin = new Thickness(0, 12, 0, 0) };
+            var warn = new Border { BorderBrush = Res("AccentLo"), BorderThickness = new Thickness(1), Background = Res("AccentWash"), Padding = new Thickness(12, 8, 12, 8), Margin = new Thickness(0, 12, 0, 0) };
             warn.Child = new TextBlock
             {
-                TextWrapping = TextWrapping.Wrap, Foreground = Res("AmberHi"),
+                TextWrapping = TextWrapping.Wrap, Foreground = Res("AccentHi"),
                 Text = "Conflicts: " + string.Join(" · ", conflicts.Select(c => $"{c.Chord.Display} → {string.Join(", ", c.Actions.Select(a => a.Name))}")) + ". Only the first action runs until resolved.",
             };
             _shortcutList.Children.Add(warn);
@@ -104,7 +104,7 @@ public partial class MainWindow
             _shortcutList.Children.Add(new TextBlock { Text = "No action matches.", Style = (Style)FindResource("Dim"), Margin = new Thickness(0, 16, 0, 0) });
         foreach (var group in shown.GroupBy(a => a.Category))
         {
-            AddSection(_shortcutList, group.Key);
+            AddHeading(_shortcutList, group.Key);
             foreach (var action in group) _shortcutList.Children.Add(ShortcutRow(action, conflictIds.Contains(action.Id)));
         }
     }
@@ -128,8 +128,8 @@ public partial class MainWindow
         {
             Content = chord.Display, HorizontalContentAlignment = HorizontalAlignment.Left, Padding = new Thickness(10, 5, 10, 5),
             FontFamily = (FontFamily)FindResource("Display"),
-            Foreground = chord.IsEmpty ? Res("Text4") : inConflict ? Res("AmberHi") : Res("Text"),
-            BorderBrush = inConflict ? Res("AmberLo") : Res("Line2"),
+            Foreground = chord.IsEmpty ? Res("Text4") : inConflict ? Res("AccentHi") : Res("Text"),
+            BorderBrush = inConflict ? Res("AccentLo") : Res("Line2"),
             ToolTip = "Click, then press the new shortcut. Escape cancels.",
         };
         var feedback = new TextBlock { Style = (Style)FindResource("Dim"), Margin = new Thickness(0, 2, 0, 4), Visibility = Visibility.Collapsed };
@@ -159,8 +159,8 @@ public partial class MainWindow
         CancelCapture();
         _listeningButton = button;
         button.Content = "Press any key…";
-        button.Foreground = Res("AmberHi");
-        button.BorderBrush = Res("Amber");
+        button.Foreground = Res("AccentHi");
+        button.BorderBrush = Res("Accent");
         feedback.Visibility = Visibility.Collapsed;
         _captureKey = e =>
         {
@@ -205,9 +205,9 @@ public partial class MainWindow
     {
         button.Content = chord.Display;
         var old = _bindings.Get(action.Id);
-        var panel = new Border { BorderBrush = Res("AmberLo"), BorderThickness = new Thickness(1), Background = Res("AmberWash"), Padding = new Thickness(12, 8, 12, 8), Margin = new Thickness(0, 2, 0, 6) };
+        var panel = new Border { BorderBrush = Res("AccentLo"), BorderThickness = new Thickness(1), Background = Res("AccentWash"), Padding = new Thickness(12, 8, 12, 8), Margin = new Thickness(0, 2, 0, 6) };
         var stack = new StackPanel();
-        stack.Children.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Res("AmberHi"), Text = $"{chord.Display} is already used by {string.Join(", ", others.Select(o => o.Name))}." });
+        stack.Children.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Res("AccentHi"), Text = $"{chord.Display} is already used by {string.Join(", ", others.Select(o => o.Name))}." });
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 8, 0, 0) };
         var replace = new Button { Style = (Style)FindResource("Primary"), Content = "Replace", Margin = new Thickness(0, 0, 6, 0), ToolTip = $"{string.Join(", ", others.Select(o => o.Name))} become unassigned" };
         replace.Click += (_, _) =>

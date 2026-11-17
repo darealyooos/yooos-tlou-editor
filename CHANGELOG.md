@@ -3,7 +3,31 @@
 All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com),
 versioning: [SemVer](https://semver.org).
 
-## [0.9.0] — unreleased (first public preview)
+## [0.10.0] — 2026-11-17
+
+### Added
+- "Studio" interface redesign of the desktop editor: graphite palette with a single violet accent, 16 px stroke
+  icons, File / Edit / View / Tools / Help menu bar, docked layout (Scene Hierarchy over the Asset Browser on the
+  left, Inspector on the right, Asset Workspace under the viewport), all resizable and remembered.
+- Scene Hierarchy: Scene / World / categories / Gameplay (Spawns, Volumes) tree with type icons, search filter,
+  right-click menu (focus, duplicate, delete), double click to focus.
+- Asset Browser: folder tree of categories and the archives they come from (filters the results).
+- Asset Workspace: selected-asset preview card plus Assets (what the scene uses; click cycles instances),
+  Materials, Textures (decoded base-colour mips) and Meshes (LOD0 submeshes) tabs, all read from the paks.
+- Inspector: collapsible sections (remembered), one-line X / Y / Z fields with scrubbing and reset,
+  Focus / Duplicate / Delete actions, material texture swatches.
+- Viewport: toolbar with tool icons and key badges, perspective / orthographic projection (View menu or toolbar),
+  views from top / front / right, clickable orientation gizmo, major / minor ground grid with axis lines,
+  redesigned move (cones), rotate and scale (cubes + uniform centre) gizmos with a highlighted hover axis.
+
+### Fixed
+- Orthographic picking: view-centre placement, drops and clicks use distances measured from the eye.
+
+### Changed
+- Thumbnail cache regenerated once (new viewport background).
+- `scripts/package.ps1 -ReuseWebFrom <zip>` reuses the web editor of an earlier release when `src/Web` is not in the tree.
+
+## [0.9.0] — 2026-11-16 (first public preview)
 
 ### Added
 - Public asset database site (`site/`, `scripts/build-site.ps1`): search by name, SID, archive or texture; categories,

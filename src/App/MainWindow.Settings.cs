@@ -85,7 +85,7 @@ public partial class MainWindow
         MenuToggleInspector.IsChecked = a.ShowInspector;
         SetSidePanels();
 
-        _camera.Camera.FieldOfView = _settings.Viewport.FieldOfView;
+        _camera.Perspective.FieldOfView = _settings.Viewport.FieldOfView;
         if (ShowGrid.IsChecked != _settings.Viewport.ShowGrid) { ShowGrid.IsChecked = _settings.Viewport.ShowGrid; ApplyLayerVisibility(); }
         OnAssetGridSizeChanged(this, null!);
         RefreshGizmo();
@@ -319,7 +319,7 @@ public partial class MainWindow
         SettingsContent.Children.Add(new TextBlock { Text = subtitle, Foreground = Res("Text3"), FontSize = 12.5, Margin = new Thickness(0, 4, 0, 6) });
     }
 
-    private void SettingsGroup(string title) => AddSection(SettingsContent, title);
+    private void SettingsGroup(string title) => AddHeading(SettingsContent, title);
 
     private Grid SettingRow(string label, string? hint, UIElement control, double controlWidth = 300)
     {

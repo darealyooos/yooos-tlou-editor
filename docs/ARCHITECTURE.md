@@ -10,20 +10,22 @@ src/
     Scene/         SceneDocument (.frscene), transforms, boundary
     Editor/        EditorSettings (versioned preferences), KeyBindings + ShortcutCatalog (rebindable shortcuts)
   App/             WPF desktop editor (YooosTLOUEditor.exe)
-    Themes/Theme.xaml        design system: colour tokens, typography, every control template
-    MainWindow.xaml          layout: navigation, browser, viewport / catalogue / settings, outliner + inspector, status bar
+    Themes/Theme.xaml        design system: colour tokens, I.* stroke icons, typography, every control template
+    MainWindow.xaml          layout: menu bar, hierarchy + asset browser (left), viewport toolbar / viewport / asset
+                             workspace or catalogue / settings (centre), inspector (right), status bar
     MainWindow.*.cs          partial classes by concern:
       .xaml.cs     scene, maps, objects, files, memory trim
-      .Browser.cs  asset browser, categories, favourites, list/grid, preview cache, thumbnails
-      .Viewport.cs camera navigation, gizmo drags, picking, helpers rendering
-      .Panels.cs   outliner and inspector
+      .Browser.cs  asset browser, category / archive tree, favourites, list/grid, preview cache, thumbnails
+      .Workspace.cs asset workspace dock: scene assets, materials, textures, meshes of the selection
+      .Viewport.cs camera navigation, projection, view presets, orientation gizmo, gizmo drags, picking, helpers
+      .Panels.cs   scene hierarchy and inspector (collapsible sections, vector fields)
       .Input.cs    the single keyboard router (action registry)
       .Undo.cs     snapshot undo / redo
       .Settings.cs settings persistence, application and pages
       .Shortcuts.cs Settings › Controls (shortcut manager)
-      .Layout.cs   workspaces, panels, menus, shortcut sheet
+      .Layout.cs   workspaces, docked panels and their persistence, menu bar, shortcut sheet
       .SelfTest.cs / .Profile.cs  automation (--selftest, --profile)
-    Rendering/     CameraRig, Gizmo, MeshBuilder (frozen WPF models, per-material batching), Shapes
+    Rendering/     CameraRig (perspective / orthographic), Gizmo, MeshBuilder (frozen WPF models, per-material batching), Shapes
   Web/             ASP.NET Core minimal API + three.js front end (YooosTLOUEditor.Web.exe)
 tests/Yooos.Tests  xUnit: formats, settings, key bindings, chunk cache; game-file tests when an install exists
 ```
