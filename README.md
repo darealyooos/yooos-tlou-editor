@@ -4,7 +4,8 @@ Explore game assets, inspect 3D models, browse textures and metadata, and build 
 
 Designed for modders, creators and technical artists, Yooos TLOU Editor brings asset exploration and world editing together in one workspace.
 
-<img width="1918" height="1079" alt="editr1" src="https://github.com/user-attachments/assets/881c7ea0-5c22-4a71-9040-bbd53e682904" />
+<img width="1919" height="1079" alt="redesign 2" src="https://github.com/user-attachments/assets/0c04c2b3-e411-439a-be10-964b60076c0d" />
+
 
 **Features**
 - Native game asset catalogue
@@ -17,6 +18,7 @@ Designed for modders, creators and technical artists, Yooos TLOU Editor brings a
 
 An independent community project. Not affiliated with or endorsed by Naughty Dog or Sony Interactive Entertainment.
 
-<img width="1919" height="1079" alt="editor2" src="https://github.com/user-attachments/assets/8dff7a41-73a1-4ca6-aaeb-80bc1f11b68e" />
+<img width="1919" height="1079" alt="redesign 1" src="https://github.com/user-attachments/assets/c5147079-42bc-4696-ae14-25a074b9123b" />
+
 
 
